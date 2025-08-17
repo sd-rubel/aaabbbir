@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</title>
-  <link rel="stylesheet" href="./css/all.min.css" />
+  <link rel="stylesheet" href="./fontawesome/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -29,7 +29,12 @@
 
     body {
       font-family: 'Hind Siliguri', sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: linear-gradient(135deg, #0f172a, #1e293b), url('./flag.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      opacity: 0.1; /* Low opacity for background image */
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -70,6 +75,7 @@
       box-shadow: var(--glass-shadow);
       position: relative;
       z-index: 1;
+      opacity: 1; /* Ensure app content is fully opaque */
     }
 
     .logo-container {
@@ -108,7 +114,7 @@
       z-index: 2;
     }
 
-    .play-pause-btn {
+    .play-pause-btn, .audio-upload-btn {
       background: var(--accent);
       color: #fff;
       border: none;
@@ -124,7 +130,7 @@
       transition: background 0.3s ease;
     }
 
-    .play-pause-btn:hover {
+    .play-pause-btn:hover, .audio-upload-btn:hover {
       background: var(--accent2);
     }
 
@@ -338,7 +344,7 @@
       .logo { width: 60px; height: 60px; }
       .logo-text { font-size: 0.7rem; margin-top: 5px; }
       .audio-controls { right: 10px; top: 10px; }
-      .play-pause-btn { width: 30px; height: 30px; font-size: 1rem; }
+      .play-pause-btn, .audio-upload-btn { width: 30px; height: 30px; font-size: 1rem; }
       .volume-control { width: 80px; }
       .subscribe p { font-size: 1rem; }
       .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
@@ -358,7 +364,11 @@
     <button id="play-pause-btn" class="play-pause-btn">
       <i class="fas fa-play"></i>
     </button>
-    <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.2">
+    <button id="audio-upload-btn" class="audio-upload-btn">
+      <i class="fas fa-music"></i>
+    </button>
+    <input type="file" id="audio-upload" accept="audio/*" style="display: none;">
+    <input type="range" id="volume-control" class="volume-control" min="0.05" max="0.2" step="0.01" value="0.2">
   </div>
   <div class="app">
     <h1 class="title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> এর ভোকাবুলারি প্র্যাকটিস</h1>
@@ -396,27 +406,54 @@
     </div>
   </div>
 
-  <audio id="background-music" src="./background_music.mp3" preload="auto" loop></audio>
+  <audio id="background-music" preload="auto" loop></audio>
   <audio id="beep-sound" src="./click.mp3" preload="auto"></audio>
   <audio id="result-sound" src="./success.mp3" preload="auto"></audio>
   <button id="unlock-audio" style="display: none;"></button>
 
   <script>
-    // Reference to HTML audio elements
+    // Audio elements and controls
     const backgroundMusic = document.getElementById('background-music');
     const beepSound = new Audio('./click.mp3');
     const resultSound = new Audio('./success.mp3');
     const playPauseBtn = document.getElementById('play-pause-btn');
+    const audioUpload = document.getElementById('audio-upload');
+    const audioUploadBtn = document.getElementById('audio-upload-btn');
     const volumeControl = document.getElementById('volume-control');
+    let currentVolume = 0.2; // Store user’s volume choice
 
-    // Set initial volume to 20%
-    backgroundMusic.volume = 0.1;
-    volumeControl.value = 0.1;
+    // Set initial volume
+    backgroundMusic.volume = currentVolume;
+    volumeControl.value = currentVolume;
 
-    // Ensure volume is set after audio is ready
+    // Handle audio file upload
+    audioUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        backgroundMusic.src = url;
+        backgroundMusic.load();
+        console.log('Audio file loaded:', file.name);
+        // Attempt to play after loading
+        backgroundMusic.play().then(() => {
+          playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          console.log('Background music playing');
+        }).catch((e) => {
+          console.error('Error playing uploaded audio:', e);
+          document.getElementById('status-text').textContent = 'অডিও প্লে করতে ব্যর্থ।';
+        });
+      }
+    });
+
+    // Trigger file input click
+    audioUploadBtn.addEventListener('click', () => {
+      audioUpload.click();
+    });
+
+    // Ensure volume persists after looping
     backgroundMusic.addEventListener('canplay', () => {
-      backgroundMusic.volume = 0.2;
-      console.log('Background music volume set to 20%');
+      backgroundMusic.volume = currentVolume;
+      console.log(`Background music volume set to ${Math.round(currentVolume * 100)}%`);
     });
 
     // Handle audio loading errors
@@ -427,25 +464,30 @@
 
     // Play/Pause button functionality
     playPauseBtn.addEventListener('click', () => {
-      if (backgroundMusic.paused) {
-        backgroundMusic.play().then(() => {
-          playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-          console.log('Background music playing');
-        }).catch((e) => {
-          console.error('Error playing background music:', e);
-          document.getElementById('status-text').textContent = 'মিউজিক প্লে করতে ব্যর্থ।';
-        });
+      if (backgroundMusic.src) {
+        if (backgroundMusic.paused) {
+          backgroundMusic.play().then(() => {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            console.log('Background music playing');
+          }).catch((e) => {
+            console.error('Error playing background music:', e);
+            document.getElementById('status-text').textContent = 'মিউজিক প্লে করতে ব্যর্থ।';
+          });
+        } else {
+          backgroundMusic.pause();
+          playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+          console.log('Background music paused');
+        }
       } else {
-        backgroundMusic.pause();
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        console.log('Background music paused');
+        document.getElementById('status-text').textContent = 'অডিও ফাইল নির্বাচন করুন।';
       }
     });
 
     // Volume control functionality
     volumeControl.addEventListener('input', () => {
-      backgroundMusic.volume = volumeControl.value;
-      console.log(`Volume set to ${Math.round(volumeControl.value * 100)}%`);
+      currentVolume = parseFloat(volumeControl.value);
+      backgroundMusic.volume = currentVolume;
+      console.log(`Volume set to ${Math.round(currentVolume * 100)}%`);
     });
 
     // Set result sound volume
@@ -618,32 +660,4 @@
 
       // Fallback in case speechSynthesis hangs
       setTimeout(() => {
-        if (!timerContainer.classList.contains("visible")) {
-          nextCard();
-        }
-      }, 7000);
-    }
-
-    // Preload audio files
-    backgroundMusic.load();
-    beepSound.load();
-    resultSound.load();
-
-    // Start the app after loading words
-    function startApp() {
-      startHourTimer();
-      animateParticles();
-      nextCard();
-    }
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-
-    // Load words and start app
-    window.onload = loadWords;
-  </script>
-</body>
-</html>
+        if (!timerConta
