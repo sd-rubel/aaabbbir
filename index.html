@@ -50,9 +50,25 @@
       animation: pulse 15s infinite alternate;
     }
 
+    body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.05) 50%, transparent 75%);
+      background-size: 200% 200%;
+      animation: wave 10s linear infinite;
+      opacity: 0.2;
+      z-index: -1;
+    }
+
     @keyframes pulse {
       0% { opacity: 0.2; }
       100% { opacity: 0.4; }
+    }
+
+    @keyframes wave {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 200%; }
     }
 
     .app {
@@ -107,28 +123,34 @@
       justify-content: center;
       align-items: center;
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      animation: card-glow 2s ease-in-out infinite alternate;
       overflow: hidden;
+    }
+
+    @keyframes card-glow {
+      0% { box-shadow: var(--glass-shadow); }
+      100% { box-shadow: 0 0 20px var(--glow), 0 0 30px var(--accent2); }
     }
 
     .question,
     .answer,
     .pronunciation {
-      font-size: 2rem;
-      font-weight: 600;
+      font-size: 2.2rem;
+      font-weight: 700;
       opacity: 0;
       transform: scale(0.8);
       transition: opacity var(--transition), transform var(--transition);
     }
 
     .answer {
-      font-size: 2.5rem;
-      font-weight: 700;
+      font-size: 2.8rem;
+      font-weight: 800;
       color: var(--answer);
       text-shadow: 0 0 15px var(--glow);
     }
 
     .pronunciation {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 400;
       color: var(--muted);
       margin-top: 10px;
@@ -147,10 +169,16 @@
       height: 60px;
       opacity: 0;
       transition: opacity var(--transition);
+      animation: timer-rotate 10s linear infinite;
     }
 
     .timer-container.visible {
       opacity: 1;
+    }
+
+    @keyframes timer-rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .timer {
@@ -217,7 +245,38 @@
       gap: 8px;
       cursor: default;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+      animation: button-pop 2s ease-in-out infinite alternate;
     }
+
+    @keyframes button-pop {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    .social-links {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .social-links a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .social-links a:hover {
+      transform: scale(1.05);
+    }
+
+    .social-links .facebook { color: #1877f2; }
+    .social-links .youtube { color: #ff0000; }
 
     #particles {
       position: absolute;
@@ -241,14 +300,16 @@
 
     @media (max-width: 600px) {
       .title { font-size: 1.8rem; }
-      .question, .answer { font-size: 1.6rem; }
-      .pronunciation { font-size: 1rem; }
+      .question, .answer { font-size: 1.8rem; }
+      .pronunciation { font-size: 1.1rem; }
       .card { padding: 30px; height: 250px; }
       .timer-container { width: 50px; height: 50px; }
       .timer { font-size: 1rem; }
       .logo { width: 60px; height: 60px; left: 10px; top: 10px; }
       .subscribe p { font-size: 1rem; }
       .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
+      .social-links { flex-direction: column; gap: 10px; }
+      .social-links a { font-size: 0.9rem; }
     }
   </style>
 </head>
@@ -274,6 +335,14 @@
     <div class="subscribe">
       <p>জাপানি ভাষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
       <button><i class="fa-solid fa-play"></i> সাবস্ক্রাইব</button>
+    </div>
+    <div class="social-links">
+      <a href="https://facebook.com/sdnrubel" class="facebook" target="_blank">
+        <i class="fa-brands fa-facebook-f"></i> facebook.com/sdnrubel
+      </a>
+      <a href="https://youtube.com/@sdnrubel" class="youtube" target="_blank">
+        <i class="fa-brands fa-youtube"></i> youtube.com/@sdnrubel
+      </a>
     </div>
   </div>
   <canvas id="particles"></canvas>
@@ -372,6 +441,7 @@
     }
 
     function showAnswer(item) {
+      clearInterval(timerInterval); // Stop beep sound
       qEl.textContent = item.q;
       aEl.textContent = item.a;
       pEl.textContent = item.p;
