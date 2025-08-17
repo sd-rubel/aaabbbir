@@ -282,7 +282,7 @@
       font-weight: 500;
       width: 220px;
       justify-content: center;
-      position:{keeps} relative;
+      position: relative;
       overflow: hidden;
       color: #fff; /* White text */
     }
@@ -351,15 +351,18 @@
     </div>
   </div>
 
+  <audio id="background-music" src="./background_music.mp3" preload="auto" autoplay loop></audio>
   <audio id="beep-sound" src="./click.mp3" preload="auto"></audio>
   <audio id="result-sound" src="./success.mp3" preload="auto"></audio>
   <button id="unlock-audio" style="display: none;"></button>
 
   <script>
     // Preload audio to prevent lag
+    const backgroundMusic = new Audio('./background_music.mp3');
     const beepSound = new Audio('./click.mp3');
     const resultSound = new Audio('./success.mp3');
-    resultSound.volume = 0.5; // Reduce success sound volume by 50%
+    backgroundMusic.volume = 0.2; // 20% volume for background music
+    resultSound.volume = 0.5; // 50% volume for success sound
 
     let DATA = [];
     let currentIndex = -1;
@@ -534,6 +537,7 @@
     }
 
     // Preload audio files
+    backgroundMusic.load();
     beepSound.load();
     resultSound.load();
 
