@@ -29,12 +29,7 @@
 
     body {
       font-family: 'Hind Siliguri', sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b), url('./flag.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      opacity: 0.1; /* Low opacity for background image */
+      background: linear-gradient(135deg, #0f172a, #1e293b);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -75,7 +70,6 @@
       box-shadow: var(--glass-shadow);
       position: relative;
       z-index: 1;
-      opacity: 1; /* Ensure app content is fully opaque */
     }
 
     .logo-container {
@@ -660,4 +654,17 @@
 
       // Fallback in case speechSynthesis hangs
       setTimeout(() => {
-        if (!timerConta
+        if (!timerContainer.classList.contains("visible")) {
+          nextCard();
+        }
+      }, 7000);
+    }
+
+    // Preload audio files
+    beepSound.load();
+    resultSound.load();
+
+    // Start the app after loading words
+    function startApp() {
+      startHourTimer();
+      animatePar
