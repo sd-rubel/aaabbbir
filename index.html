@@ -652,4 +652,68 @@
 
       function updateTimer(currentTime) {
         const elapsed = currentTime - startTime;
-        timeLeft =
+        timeLeft = questionDuration - elapsed;
+        if (timeLeft <= 0) {
+          clearTimeout(timerInterval);
+          timerContainer.classList.remove("visible");
+          showAnswer(item);
+          return;
+        }
+        const progress = (timeLeft / questionDuration) * 251.3;
+        timerProgress.style.strokeDashoffset = progress;
+        timerCount.textContent = Math.floor(timeLeft / 1000);
+        if (timeLeft <= beepCount * 1000 && beepCount >= 0) {
+          try {
+            beepSound.play().catch(() => console.warn('Beep sound failed to play'));
+          } catch (e) {
+            console.warn('Error playing beep sound:', e);
+          }
+          beepCount--;
+        }
+        timerInterval = setTimeout(() => {
+          requestAnimationFrame(updateTimer);
+        }, 1000 - (elapsed % 1000));
+      }
+
+      requestAnimationFrame(updateTimer);
+    }
+
+    function showAnswer(item) {
+      clearTimeout(timerInterval);
+      qEl.textContent = item.bn_w;
+      aEl.textContent = item.jp_w;
+      pEl.textContent = item.prnction;
+      aEl.classList.add("visible");
+      pEl.classList.add("visible");
+      statusEl.textContent = "✔ উত্তর";
+      try {
+        resultSound.play().catch((e) => console.warn('Result sound failed to play:', e));
+      } catch (e) {
+        console.warn('Error playing result sound:', e);
+      }
+
+      speak(item.jp_w, () => {
+        setTimeout(nextCard, 2000);
+      });
+    }
+
+    backgroundMusic.load();
+    beepSound.load();
+    resultSound.load();
+
+    function startApp() {
+      enterFullscreenAndLock();
+      startHourTimer();
+      animateParticles();
+      nextCard();
+    }
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerHeight;
+      canvas.height = window.innerWidth;
+    });
+
+    window.onload = loadWords;
+  </script>
+</body>
+</html>
