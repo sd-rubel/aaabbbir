@@ -357,12 +357,30 @@
   <button id="unlock-audio" style="display: none;"></button>
 
   <script>
-    // Preload audio to prevent lag
-    const backgroundMusic = new Audio('./background_music.mp3');
+    // Reference to HTML audio elements
+    const backgroundMusic = document.getElementById('background-music');
     const beepSound = new Audio('./click.mp3');
     const resultSound = new Audio('./success.mp3');
-    backgroundMusic.volume = 0.05; // 20% volume for background music
+
+    // Set volumes
+    backgroundMusic.volume = 0.2; // 20% volume for background music
     resultSound.volume = 0.5; // 50% volume for success sound
+    // beepSound remains at default volume (1.0)
+
+    // Ensure volume is set after audio is ready
+    backgroundMusic.addEventListener('canplay', () => {
+      backgroundMusic.volume = 0.2;
+      console.log('Background music volume set to 20%');
+    });
+
+    // Handle audio loading errors
+    backgroundMusic.addEventListener('error', (e) => {
+      console.error('Error loading background music:', e);
+      document.getElementById('status-text').textContent = 'ব্যাকগ্রাউন্ড মিউজিক লোড করতে ব্যর্থ।';
+    });
+
+    // Unlock audio on user interaction
+    document.getElementById('unlock-audio').click();
 
     let DATA = [];
     let currentIndex = -1;
@@ -378,9 +396,6 @@
     const timerFill = document.getElementById('timer-fill');
     const statusEl = document.getElementById('status-text');
     const progressBar = document.getElementById('progress-bar');
-
-    // Unlock audio on user interaction
-    document.getElementById('unlock-audio').click();
 
     // Particle Animation
     const canvas = document.getElementById('particles');
