@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -39,36 +39,24 @@
       position: relative;
     }
 
-    body::before {
-      content: '';
+    #particles {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 10% -10%, var(--accent) 0%, transparent 50%),
-                  radial-gradient(circle at 90% 110%, var(--accent2) 0%, transparent 60%);
-      opacity: 0.3;
       z-index: -1;
-      animation: pulse 15s infinite alternate;
+      pointer-events: none;
     }
 
-    body::after {
-      content: '';
+    .particle {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.05) 50%, transparent 75%);
-      background-size: 200% 200%;
-      animation: wave 10s linear infinite;
-      opacity: 0.2;
-      z-index: -1;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: float 12s linear infinite;
     }
 
-    @keyframes pulse {
-      0% { opacity: 0.2; }
-      100% { opacity: 0.4; }
-    }
-
-    @keyframes wave {
-      0% { background-position: 0% 0%; }
-      100% { background-position: 200% 200%; }
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); opacity: 0.1; }
+      50% { opacity: 0.3; }
+      100% { transform: translateY(-100vh) translateX(calc(10px - 20px * var(--rand))); opacity: 0; }
     }
 
     .app {
@@ -104,6 +92,11 @@
       animation: glow 3s ease-in-out infinite alternate;
     }
 
+    .highlight {
+      color: var(--accent2);
+      text-shadow: 0 0 10px var(--accent2);
+    }
+
     @keyframes glow {
       0% { text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent2); }
       100% { text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent2); }
@@ -123,13 +116,7 @@
       justify-content: center;
       align-items: center;
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-      animation: card-glow 2s ease-in-out infinite alternate;
       overflow: hidden;
-    }
-
-    @keyframes card-glow {
-      0% { box-shadow: var(--glass-shadow); }
-      100% { box-shadow: 0 0 20px var(--glow), 0 0 30px var(--accent2); }
     }
 
     .question,
@@ -165,8 +152,9 @@
       position: absolute;
       top: 15px;
       right: 20px;
-      width: 100px;
-      height: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       opacity: 0;
       transition: opacity var(--transition);
     }
@@ -175,9 +163,17 @@
       opacity: 1;
     }
 
+    .timer-count {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-shadow: 0 0 5px var(--glow);
+      margin-top: 5px;
+    }
+
     .timer-bar {
-      height: 100%;
-      width: 100%;
+      width: 100px;
+      height: 8px;
       background: var(--muted);
       border-radius: 4px;
       overflow: hidden;
@@ -187,7 +183,7 @@
     .timer-fill {
       height: 100%;
       width: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      background: var(--accent); /* Solid theme color */
       transition: width linear;
     }
 
@@ -203,7 +199,7 @@
     .progress-bar {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      background: var(--accent); /* Solid theme color */
       transition: width 0.5s ease;
     }
 
@@ -273,58 +269,39 @@
       justify-content: center;
       position: relative;
       overflow: hidden;
+      color: #fff; /* White text */
     }
 
-    .social-links .social .text {
-      animation: slide-text 6s ease-in-out infinite;
-    }
-
-    .social-links .facebook { background: rgba(24, 119, 242, 0.1); color: #1877f2; }
-    .social-links .youtube { background: rgba(255, 0, 0, 0.1); color: #ff0000; }
-
-    #particles {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.6;
-      animation: float 10s infinite;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0); opacity: 0.6; }
-      50% { opacity: 0.2; }
-      100% { transform: translateY(-100vh); opacity: 0; }
-    }
+    .social-links .facebook { background: #1877f2; } /* Facebook blue */
+    .social-links .youtube { background: #ff0000; } /* YouTube red */
 
     @media (max-width: 600px) {
       .title { font-size: 1.8rem; }
       .question, .answer { font-size: 1.8rem; }
       .pronunciation { font-size: 1.1rem; }
       .card { padding: 30px; height: 250px; }
-      .timer-container { width: 80px; height: 6px; top: 10px; right: 10px; }
+      .timer-bar { width: 80px; height: 6px; }
+      .timer-count { font-size: 1.4rem; }
       .logo { width: 60px; height: 60px; left: 10px; top: 10px; }
       .subscribe p { font-size: 1rem; }
       .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
       .social-links { flex-direction: column; gap: 10px; }
       .social-links .social { font-size: 0.9rem; width: 180px; }
+      .particle { width: 4px; height: 4px; }
     }
   </style>
 </head>
 <body>
+  <canvas id="particles"></canvas>
   <img src="https://github.com/sd-rubel/NihonGoBD/raw/main/profile.jpg" alt="NihonGoBD Logo" class="logo">
   <div class="app">
-    <h1 class="title">জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</h1>
+    <h1 class="title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> এর ভোকাবুলারি প্র্যাকটিস</h1>
     <div class="card">
       <div class="timer-container">
         <div class="timer-bar">
           <div id="timer-fill" class="timer-fill"></div>
         </div>
+        <div id="timer-count" class="timer-count"></div>
       </div>
       <div id="q" class="question"></div>
       <div id="a" class="answer"></div>
@@ -337,58 +314,104 @@
     <div class="subscribe">
       <p>জাপানি ভাষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
       <button>
-        <i class="fa-solid fa-play"></i>
-        <span class="text">সাবস্ক্রাইব</span>
+        <i class="fas fa-play"></i>
+        <span class="text">Subscribe</span>
       </button>
     </div>
     <div class="social-links">
       <div class="social facebook">
-        <i class="fa-brands fa-facebook-f"></i>
+        <i class="fab fa-facebook-f"></i>
         <span class="text">facebook.com/sdnrubel</span>
       </div>
       <div class="social youtube">
-        <i class="fa-brands fa-youtube"></i>
+        <i class="fab fa-youtube"></i>
         <span class="text">youtube.com/@sdnrubel</span>
       </div>
     </div>
   </div>
-  <canvas id="particles"></canvas>
 
-  <audio id="beep-sound" src="https://github.com/sd-rubel/aaabbbir/raw/main/mixkit-modern-technology-select-3124.wav" preload="auto"></audio>
-  <audio id="result-sound" src="https://github.com/sd-rubel/aaabbbir/raw/main/successed-295058.mp3" preload="auto"></audio>
+  <audio id="beep-sound" src="./click.mp3" preload="auto"></audio>
+  <audio id="result-sound" src="./success.mp3" preload="auto"></audio>
+  <button id="unlock-audio" style="display: none;"></button>
 
   <script>
     // Preload audio to prevent lag
-    const beepSound = new Audio('https://github.com/sd-rubel/aaabbbir/raw/main/mixkit-modern-technology-select-3124.wav');
-    const resultSound = new Audio('https://github.com/sd-rubel/aaabbbir/raw/main/successed-295058.mp3');
+    const beepSound = new Audio('./click.mp3');
+    const resultSound = new Audio('./success.mp3');
     resultSound.volume = 0.5; // Reduce success sound volume by 50%
 
-    const DATA = [
-      { q: "“এখানে” জাপানিতে কী?", a: "ここ", p: "koko" },
-      { q: "“সেখানে (কাছে)” জাপানিতে কী?", a: "そこ", p: "soko" },
-      { q: "“ওখানে (দূরে)”", a: "あそこ", p: "asoko" },
-      { q: "“কোথায়?”", a: "どこ", p: "doko" },
-      { q: "‘শ্রেণীকক্ষ’", a: "きょうしつ", p: "kyoushitsu" },
-      { q: "‘খাবারঘর’", a: "しょくどう", p: "shokudou" },
-      { q: "‘অফিস’", a: "じむしょ", p: "jimusho" },
-      { q: "‘ডিপার্টমেন্টাল স্টোর’", a: "デパート", p: "depaato" },
-      { q: "‘বাংলাদেশ’", a: "バングラデシュ", p: "banguradeshu" }
-    ];
-
+    let DATA = [];
     let currentIndex = -1;
     let timerInterval;
     let totalTime = 3600; // 1 hour in seconds
-    let wordTimerColors = ['#22d3ee', '#8b5cf6', '#f43f5e', '#10b981', '#f97316'];
-    let particleColors = ['#8b5cf6', '#22d3ee', '#f43f5e', '#10b981', '#f97316'];
-    const questionDuration = 5; // seconds
+    const questionDuration = 5000; // 5 seconds in milliseconds
 
     const qEl = document.getElementById('q');
     const aEl = document.getElementById('a');
     const pEl = document.getElementById('p');
     const timerContainer = document.querySelector('.timer-container');
+    const timerCount = document.getElementById('timer-count');
     const timerFill = document.getElementById('timer-fill');
     const statusEl = document.getElementById('status-text');
     const progressBar = document.getElementById('progress-bar');
+
+    // Unlock audio on user interaction
+    document.getElementById('unlock-audio').click();
+
+    // Particle Animation
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    let currentParticleColor = 'var(--accent)';
+
+    function createParticle() {
+      const size = Math.random() * 5 + 2;
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height,
+        size,
+        speed: Math.random() * 2 + 1,
+        opacity: 0.1 + Math.random() * 0.2,
+        rand: Math.random()
+      });
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.y -= p.speed;
+        ctx.beginPath();
+        ctx.arc(p.x + (10 - 20 * p.rand), p.y, p.size, 0, Math.PI * 2);
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = currentParticleColor;
+        ctx.fill();
+        if (p.y < 0) particles.splice(i, 1);
+      }
+      if (particles.length < 30) createParticle();
+      requestAnimationFrame(animateParticles);
+    }
+
+    // Change particle color every 5 seconds
+    setInterval(() => {
+      currentParticleColor = currentParticleColor === 'var(--accent)' ? 'var(--accent2)' : 'var(--accent)';
+    }, 5000);
+
+    // Load words from JSON
+    async function loadWords() {
+      try {
+        const response = await fetch('./words.json');
+        if (!response.ok) throw new Error('Failed to load words.json');
+        DATA = await response.json();
+        startApp();
+      } catch (error) {
+        console.warn('Error loading words:', error);
+        statusEl.textContent = "শব্দ লোড করতে ব্যর্থ। পুনরায় চেষ্টা করুন।";
+      }
+    }
 
     function speak(text, callback) {
       if ('speechSynthesis' in window && speechSynthesis.getVoices().some(voice => voice.lang.includes('ja'))) {
@@ -416,14 +439,11 @@
       }, 1000);
     }
 
-    function getRandomColor(array) {
-      return array[Math.floor(Math.random() * array.length)];
-    }
-
     function nextCard() {
+      if (DATA.length === 0) return;
       currentIndex = Math.floor(Math.random() * DATA.length);
       const item = DATA[currentIndex];
-      qEl.textContent = item.q;
+      qEl.textContent = item.bn_w;
       aEl.textContent = "";
       pEl.textContent = "";
       qEl.classList.add("visible");
@@ -431,43 +451,56 @@
       pEl.classList.remove("visible");
       statusEl.textContent = "প্রশ্ন চলছে...";
       timerContainer.classList.add("visible");
-      timerFill.style.background = `linear-gradient(90deg, ${getRandomColor(wordTimerColors)}, ${getRandomColor(wordTimerColors)})`;
+      timerFill.style.background = 'var(--accent)'; // Solid color
+      timerCount.textContent = "5";
 
       let timeLeft = questionDuration;
+      let beepCount = 4; // Beep at 4, 3, 2, 1 seconds
+      const startTime = performance.now();
       timerFill.style.width = '100%';
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft > 0) { // Play beep only for seconds 5 to 1
+
+      function updateTimer(currentTime) {
+        const elapsed = currentTime - startTime;
+        timeLeft = questionDuration - elapsed;
+        if (timeLeft <= 0) {
+          clearTimeout(timerInterval);
+          timerContainer.classList.remove("visible");
+          showAnswer(item);
+          return;
+        }
+        timerFill.style.width = `${(timeLeft / questionDuration) * 100}%`;
+        timerCount.textContent = Math.ceil(timeLeft / 1000);
+        if (timeLeft <= beepCount * 1000 && beepCount > 0) { // Beep at 4, 3, 2, 1 seconds
           try {
             beepSound.play().catch(() => console.warn('Beep sound failed to play'));
           } catch (e) {
             console.warn('Error playing beep sound:', e);
           }
+          beepCount--;
         }
-        timerFill.style.width = `${(timeLeft / questionDuration) * 100}%`;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          timerContainer.classList.remove("visible");
-          showAnswer(item);
-        }
-      }, 1000);
+        timerInterval = setTimeout(() => {
+          requestAnimationFrame(updateTimer);
+        }, 1000 - (elapsed % 1000));
+      }
+
+      requestAnimationFrame(updateTimer);
     }
 
     function showAnswer(item) {
-      clearInterval(timerInterval); // Ensure beep sound stops
-      qEl.textContent = item.q;
-      aEl.textContent = item.a;
-      pEl.textContent = item.p;
+      clearTimeout(timerInterval); // Ensure beep sound stops
+      qEl.textContent = item.bn_w;
+      aEl.textContent = item.jp_w;
+      pEl.textContent = item.prnction;
       aEl.classList.add("visible");
       pEl.classList.add("visible");
       statusEl.textContent = "✔ উত্তর";
       try {
-        resultSound.play().catch(() => console.warn('Result sound failed to play'));
+        resultSound.play().catch((e) => console.warn('Result sound failed to play:', e));
       } catch (e) {
         console.warn('Error playing result sound:', e);
       }
 
-      speak(item.a, () => {
+      speak(item.jp_w, () => {
         setTimeout(nextCard, 2000); // 2s after speech
       });
 
@@ -479,61 +512,25 @@
       }, 7000);
     }
 
-    // Particle Animation
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles = [];
-    let currentParticleColor = particleColors[0];
-
-    function createParticle() {
-      const size = Math.random() * 5 + 2;
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: canvas.height,
-        size,
-        speed: Math.random() * 2 + 1
-      });
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.y -= p.speed;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = currentParticleColor;
-        ctx.fill();
-        if (p.y < 0) particles.splice(i, 1);
-      }
-      if (particles.length < 50) createParticle();
-      requestAnimationFrame(animateParticles);
-    }
-
-    // Change particle color every 5 seconds
-    setInterval(() => {
-      currentParticleColor = getRandomColor(particleColors);
-    }, 5000);
-
     // Preload audio files
     beepSound.load();
     resultSound.load();
 
-    // Start the app
-    window.onload = () => {
+    // Start the app after loading words
+    function startApp() {
       startHourTimer();
-      nextCard();
       animateParticles();
-    };
+      nextCard();
+    }
 
     // Handle window resize
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
+
+    // Load words and start app
+    window.onload = loadWords;
   </script>
 </body>
 </html>
