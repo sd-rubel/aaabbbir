@@ -1,287 +1,162 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #1e2749;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --ink: #f1f5f9;
-            --muted: #94a3b8;
-            --accent: #6d28d9;
-            --accent-light: #8b5cf6;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            --transition: 0.6s ease-in-out;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body {
-            width: 100vw; height: 100vh; overflow: hidden;
-            font-family: 'Hind Siliguri', sans-serif;
-            background: linear-gradient(135deg, var(--bg), #0f172a);
-            color: var(--ink); display: flex; justify-content: center; align-items: center;
-        }
-        .container {
-            width: 95%; max-width: 1280px; aspect-ratio: 16 / 9;
-            padding: 2rem; border-radius: 20px;
-            backdrop-filter: blur(12px); background: var(--card-bg);
-            border: 1px solid var(--glass-border); box-shadow: var(--shadow);
-            position: relative; display: grid;
-            grid-template-rows: auto 1fr auto auto; gap: 1rem;
-            text-align: center;
-        }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .app-title {
-            font-size: clamp(1.5rem, 4vw, 3rem); font-weight: 700;
-            text-shadow: 0 0 10px var(--accent-light);
-        }
-        .highlight { color: var(--accent-light); }
-        .audio-controls { display: flex; align-items: center; gap: 10px; }
-        .play-pause-btn {
-            background: var(--accent); color: #fff; border: none;
-            border-radius: 50%; width: 55px; height: 55px;
-            font-size: 1.5rem; cursor: pointer;
-            box-shadow: 0 0 15px var(--accent-light);
-            transition: transform 0.2s ease;
-        }
-        .play-pause-btn:hover { transform: scale(1.1); }
-        .volume-control { width: 100px; accent-color: var(--accent-light); }
-        .main-card {
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; position: relative;
-        }
-        .timer-container {
-            position: absolute; top: 0; right: 0; width: 70px; height: 70px;
-            opacity: 0; transition: opacity 0.5s ease;
-        }
-        .timer-container.visible { opacity: 1; }
-        .timer-svg { transform: rotate(-90deg); }
-        .timer-circle-bg { fill: none; stroke: var(--muted); stroke-width: 5; }
-        .timer-circle-progress {
-            fill: none; stroke: var(--accent-light); stroke-width: 5;
-            stroke-linecap: round; stroke-dasharray: 213.62; stroke-dashoffset: 213.62;
-            transition: stroke-dashoffset linear;
-        }
-        .timer-count {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2rem; font-weight: 600;
-        }
-        .question, .answer, .pronunciation {
-            font-family: 'Noto Sans JP', sans-serif; font-weight: 700;
-            opacity: 0; transform: translateY(20px) scale(0.9);
-            transition: var(--transition);
-        }
-        .question { font-size: clamp(2rem, 6vw, 4rem); }
-        .answer {
-            font-size: clamp(2.5rem, 8vw, 5rem); color: var(--accent-light);
-            text-shadow: 0 0 15px var(--accent-light);
-        }
-        .pronunciation {
-            font-family: 'Hind Siliguri', sans-serif; font-weight: 400;
-            font-size: clamp(1.2rem, 3vw, 2rem); color: var(--muted);
-            margin-top: 10px;
-        }
-        .visible { opacity: 1; transform: translateY(0) scale(1); }
-        .progress-bar-container {
-            width: 100%; height: 10px; background: var(--muted);
-            border-radius: 5px; overflow: hidden;
-        }
-        .progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.5s ease; }
-        .status-message { font-size: 1.2rem; font-weight: 500; color: var(--muted); }
-        .footer {
-            display: flex; flex-direction: column; align-items: center; gap: 1rem;
-            width: 100%;
-        }
-        .social-links { display: flex; justify-content: center; gap: 1rem; }
-        .social-link {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 16px; border-radius: 20px;
-            font-size: 0.9rem; color: #fff; text-decoration: none;
-            background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border);
-        }
-        .social-link.youtube { background: #ff0000; }
-        .social-link.facebook { background: #1877f2; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e2749">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    :root {
+      --bg: #1e2749;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --ink: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #6d28d9;
+      --accent-light: #8b5cf6;
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 8px 32px rgba(0,0,0,0.3);
+      --transition: 0.6s ease-in-out;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body {
+      width:100vw; height:100vh; overflow:hidden;
+      font-family:'Hind Siliguri',sans-serif;
+      background:linear-gradient(135deg,var(--bg),#0f172a);
+      color:var(--ink);
+      display:flex; justify-content:center; align-items:center;
+    }
+    .container {
+      width:100vw; height:100vh;
+      max-width:100%; max-height:100%;
+      aspect-ratio:16/9;
+      padding:2rem; border-radius:20px;
+      backdrop-filter:blur(12px); background:var(--card-bg);
+      border:1px solid var(--glass-border); box-shadow:var(--shadow);
+      position:relative; display:grid;
+      grid-template-rows:auto 1fr auto auto; gap:1rem;
+      text-align:center;
+    }
+    .header { display:flex; justify-content:space-between; align-items:center; }
+    .app-title { font-size:clamp(1.5rem,4vw,3rem); font-weight:700; text-shadow:0 0 10px var(--accent-light); }
+    .highlight { color:var(--accent-light); }
+    .audio-controls { display:flex; align-items:center; gap:10px; }
+    .play-pause-btn {
+      background:var(--accent); color:#fff; border:none;
+      border-radius:50%; width:55px; height:55px;
+      font-size:1.5rem; cursor:pointer;
+      box-shadow:0 0 15px var(--accent-light);
+      transition:transform .2s ease;
+    }
+    .play-pause-btn:hover { transform:scale(1.1); }
+    .volume-control { width:100px; accent-color:var(--accent-light); }
+    .main-card { display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; }
+    .timer-container { position:absolute; top:0; right:0; width:70px; height:70px; opacity:0; transition:opacity .5s ease; }
+    .timer-container.visible { opacity:1; }
+    .timer-svg { transform:rotate(-90deg); }
+    .timer-circle-bg { fill:none; stroke:var(--muted); stroke-width:5; }
+    .timer-circle-progress { fill:none; stroke:var(--accent-light); stroke-width:5; stroke-linecap:round; stroke-dasharray:213.62; stroke-dashoffset:213.62; transition:stroke-dashoffset linear; }
+    .timer-count { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2rem; font-weight:600; }
+    .question,.answer,.pronunciation {
+      font-family:'Noto Sans JP',sans-serif; font-weight:700;
+      opacity:0; transform:translateY(20px) scale(0.9);
+      transition:var(--transition);
+    }
+    .question { font-size:clamp(2rem,6vw,4rem); }
+    .answer { font-size:clamp(2.5rem,8vw,5rem); color:var(--accent-light); text-shadow:0 0 15px var(--accent-light); }
+    .pronunciation { font-family:'Hind Siliguri',sans-serif; font-weight:400; font-size:clamp(1.2rem,3vw,2rem); color:var(--muted); margin-top:10px; }
+    .visible { opacity:1; transform:translateY(0) scale(1); }
+    .progress-bar-container { width:100%; height:10px; background:var(--muted); border-radius:5px; overflow:hidden; }
+    .progress-bar { height:100%; width:0%; background:var(--accent); transition:width .5s ease; }
+    .status-message { font-size:1.2rem; font-weight:500; color:var(--muted); }
+    .footer { display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; }
+    .social-links { display:flex; justify-content:center; gap:1rem; }
+    .social-link { display:flex; align-items:center; gap:8px; padding:8px 16px; border-radius:20px; font-size:.9rem; color:#fff; text-decoration:none; background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); }
+    .social-link.youtube { background:#ff0000; }
+    .social-link.facebook { background:#1877f2; }
+
+    /* Portrait এ landscape করার নোটিশ */
+    @media screen and (orientation:portrait) {
+      body::before {
+        content:"👉 অনুগ্রহ করে মোবাইল Landscape করুন";
+        position:fixed; top:0; left:0; right:0; bottom:0;
+        background:#000; color:#fff; font-size:2rem;
+        display:flex; justify-content:center; align-items:center;
+        z-index:9999;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1 class="app-title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> ভোকাবুলারি</h1>
-            <div class="audio-controls">
-                <button id="play-pause-btn" class="play-pause-btn">
-                    <i class="fas fa-play"></i>
-                </button>
-                <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.05">
-            </div>
-        </header>
+  <div class="container">
+    <header class="header">
+      <h1 class="app-title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> ভোকাবুলারি</h1>
+      <div class="audio-controls">
+        <button id="play-pause-btn" class="play-pause-btn"><i class="fas fa-play"></i></button>
+        <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.05">
+      </div>
+    </header>
 
-        <main class="main-card">
-            <div class="timer-container">
-                <svg class="timer-svg" viewBox="0 0 80 80">
-                    <circle class="timer-circle-bg" cx="40" cy="40" r="34"></circle>
-                    <circle class="timer-circle-progress" cx="40" cy="40" r="34"></circle>
-                </svg>
-                <div id="timer-count" class="timer-count"></div>
-            </div>
-            <div id="q" class="question"></div>
-            <div id="a" class="answer"></div>
-            <div id="p" class="pronunciation"></div>
-        </main>
+    <main class="main-card">
+      <div class="timer-container">
+        <svg class="timer-svg" viewBox="0 0 80 80">
+          <circle class="timer-circle-bg" cx="40" cy="40" r="34"></circle>
+          <circle class="timer-circle-progress" cx="40" cy="40" r="34"></circle>
+        </svg>
+        <div id="timer-count" class="timer-count"></div>
+      </div>
+      <div id="q" class="question"></div>
+      <div id="a" class="answer"></div>
+      <div id="p" class="pronunciation"></div>
+    </main>
 
-        <div class="progress-bar-container">
-            <div id="progress-bar" class="progress-bar"></div>
-        </div>
-        <p id="status-message" class="status-message">প্রস্তুত হচ্ছে...</p>
+    <div class="progress-bar-container"><div id="progress-bar" class="progress-bar"></div></div>
+    <p id="status-message" class="status-message">প্রস্তুত হচ্ছে...</p>
 
-        <footer class="footer">
-            <div class="social-links">
-                <a href="https://www.facebook.com/sdnrubel" class="social-link facebook" target="_blank">
-                    <i class="fa-brands fa-facebook-f"></i>
-                    <span>sdnrubel</span>
-                </a>
-                <a href="https://www.youtube.com/@sdnrubel" class="social-link youtube" target="_blank">
-                    <i class="fa-brands fa-youtube"></i>
-                    <span>@sdnrubel</span>
-                </a>
-            </div>
-        </footer>
-    </div>
+    <footer class="footer">
+      <div class="social-links">
+        <a href="https://www.facebook.com/sdnrubel" class="social-link facebook" target="_blank"><i class="fa-brands fa-facebook-f"></i><span>sdnrubel</span></a>
+        <a href="https://www.youtube.com/@sdnrubel" class="social-link youtube" target="_blank"><i class="fa-brands fa-youtube"></i><span>@sdnrubel</span></a>
+      </div>
+    </footer>
+  </div>
 
-    <audio id="background-music" src="https://raw.githubusercontent.com/sd-rubel/NihonGoBD/main/background_music.mp3" preload="auto" loop></audio>
-    <audio id="beep-sound" src="https://raw.githubusercontent.com/sd-rubel/NihonGoBD/main/click.mp3" preload="auto"></audio>
-    <audio id="result-sound" src="https://raw.githubusercontent.com/sd-rubel/NihonGoBD/main/success.mp3" preload="auto"></audio>
+  <!-- Audio -->
+  <audio id="background-music" src="https://raw.githubusercontent.com/sd-rubel/NihonGoBD/main/background_music.mp3" preload="auto" loop></audio>
+  <audio id="beep-sound" src="https://raw.githubusercontent.com/sd-rubel/NihonGoBD/main/click.mp3" preload="auto"></audio>
+  <audio id="result-sound" src="https://raw.githubusercontent.com/sd-rubel/NihonGoBD/main/success.mp3" preload="auto"></audio>
 
-    <script>
-        const audio = {
-            bg: document.getElementById('background-music'),
-            beep: document.getElementById('beep-sound'),
-            result: document.getElementById('result-sound')
-        };
-        const dom = {
-            playBtn: document.getElementById('play-pause-btn'),
-            volume: document.getElementById('volume-control'),
-            q: document.getElementById('q'),
-            a: document.getElementById('a'),
-            p: document.getElementById('p'),
-            timerContainer: document.querySelector('.timer-container'),
-            timerCount: document.getElementById('timer-count'),
-            timerProgress: document.querySelector('.timer-circle-progress'),
-            status: document.getElementById('status-message'),
-            progressBar: document.getElementById('progress-bar')
-        };
-
-        let words = [];
-        let timerId;
-        const totalTime = 3600;
-        let timeLeft = totalTime;
-
-        dom.volume.addEventListener('input', () => audio.bg.volume = dom.volume.value);
-
-        dom.playBtn.addEventListener('click', () => {
-            if (audio.bg.paused) {
-                audio.bg.play().then(() => dom.playBtn.innerHTML = '<i class="fas fa-pause"></i>').catch(() => {});
-            } else {
-                audio.bg.pause();
-                dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            }
-        });
-
-        document.body.addEventListener('click', () => {
-            if (audio.bg.paused) audio.bg.play().catch(() => {});
-        }, { once: true });
-
-        async function loadWords() {
-            try {
-                dom.status.textContent = "শব্দ লোড হচ্ছে...";
-                const res = await fetch('https://raw.githubusercontent.com/sd-rubel/aaabbbir/refs/heads/main/words.json');
-                if (!res.ok) throw new Error('Failed to load data');
-                words = await res.json();
-                if (words.length === 0) throw new Error('Word list is empty');
-                dom.status.textContent = "প্রস্তুত...";
-                startApp();
-            } catch (err) {
-                dom.status.textContent = "শব্দ লোড করতে ব্যর্থ।";
-                console.error(err);
-            }
-        }
-
-        function speak(text, callback) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ja-JP';
-            utterance.onend = () => setTimeout(callback, 500);
-            window.speechSynthesis.speak(utterance);
-        }
-
-        function updateHourTimer() {
-            setInterval(() => {
-                timeLeft = (timeLeft - 1 + totalTime) % totalTime;
-                dom.progressBar.style.width = `${((totalTime - timeLeft) / totalTime) * 100}%`;
-            }, 1000);
-        }
-
-        function showCard(item) {
-            dom.q.textContent = item.bn_w;
-            dom.a.textContent = "";
-            dom.p.textContent = "";
-            dom.q.classList.add("visible");
-            dom.a.classList.remove("visible");
-            dom.p.classList.remove("visible");
-            dom.status.textContent = "প্রশ্ন চলছে...";
-            dom.timerContainer.classList.add("visible");
-
-            let time = 7000;
-            const start = performance.now();
-            const animateTimer = (now) => {
-                const elapsed = now - start;
-                const remaining = Math.max(0, time - elapsed);
-                const progress = (remaining / time) * 213.62;
-                dom.timerProgress.style.strokeDashoffset = progress;
-                dom.timerCount.textContent = Math.ceil(remaining / 1000);
-
-                if (Math.ceil(remaining / 1000) <= 6 && Math.ceil(remaining / 1000) > 0 && Math.round(remaining) % 1000 === 0) {
-                    audio.beep.play().catch(() => {});
-                }
-                
-                if (remaining > 0) {
-                    timerId = requestAnimationFrame(animateTimer);
-                } else {
-                    showAnswer(item);
-                }
-            };
-            timerId = requestAnimationFrame(animateTimer);
-        }
-
-        function showAnswer(item) {
-            cancelAnimationFrame(timerId);
-            dom.a.textContent = item.jp_w;
-            dom.p.textContent = item.prnction;
-            dom.a.classList.add("visible");
-            dom.p.classList.add("visible");
-            dom.status.textContent = "✔ উত্তর";
-            audio.result.play().catch(() => {});
-            
-            speak(item.jp_w, () => {
-                setTimeout(nextCard, 2000);
-            });
-        }
-
-        function nextCard() {
-            if (words.length === 0) return;
-            const item = words[Math.floor(Math.random() * words.length)];
-            showCard(item);
-        }
-
-        function startApp() {
-            updateHourTimer();
-            nextCard();
-        }
-
-        loadWords();
-    </script>
+  <!-- Scripts -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
+  </script>
+  <script>
+    const audio={bg:document.getElementById('background-music'),beep:document.getElementById('beep-sound'),result:document.getElementById('result-sound')};
+    const dom={playBtn:document.getElementById('play-pause-btn'),volume:document.getElementById('volume-control'),q:document.getElementById('q'),a:document.getElementById('a'),p:document.getElementById('p'),timerContainer:document.querySelector('.timer-container'),timerCount:document.getElementById('timer-count'),timerProgress:document.querySelector('.timer-circle-progress'),status:document.getElementById('status-message'),progressBar:document.getElementById('progress-bar')};
+    let words=[]; let timerId; const totalTime=3600; let timeLeft=totalTime;
+    dom.volume.addEventListener('input',()=>audio.bg.volume=dom.volume.value);
+    dom.playBtn.addEventListener('click',()=>{if(audio.bg.paused){audio.bg.play().then(()=>dom.playBtn.innerHTML='<i class="fas fa-pause"></i>').catch(()=>{});}else{audio.bg.pause();dom.playBtn.innerHTML='<i class="fas fa-play"></i>';}}); 
+    document.body.addEventListener('click',()=>{if(audio.bg.paused) audio.bg.play().catch(()=>{});},{once:true});
+    async function loadWords(){try{dom.status.textContent="শব্দ লোড হচ্ছে...";const res=await fetch('https://raw.githubusercontent.com/sd-rubel/aaabbbir/refs/heads/main/words.json');if(!res.ok) throw new Error('Failed');words=await res.json();if(words.length===0) throw new Error('Empty');dom.status.textContent="প্রস্তুত...";startApp();}catch(err){dom.status.textContent="শব্দ লোড করতে ব্যর্থ।";}}
+    function speak(text,callback){const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.onend=()=>setTimeout(callback,500);window.speechSynthesis.speak(u);}
+    function updateHourTimer(){setInterval(()=>{timeLeft=(timeLeft-1+totalTime)%totalTime;dom.progressBar.style.width=`${((totalTime-timeLeft)/totalTime)*100}%`;},1000);}
+    function showCard(item){dom.q.textContent=item.bn_w;dom.a.textContent="";dom.p.textContent="";dom.q.classList.add("visible");dom.a.classList.remove("visible");dom.p.classList.remove("visible");dom.status.textContent="প্রশ্ন চলছে...";dom.timerContainer.classList.add("visible");let time=7000;const start=performance.now();const animate=(now)=>{const elapsed=now-start;const remaining=Math.max(0,time-elapsed);const progress=(remaining/time)*213.62;dom.timerProgress.style.strokeDashoffset=progress;dom.timerCount.textContent=Math.ceil(remaining/1000);if(Math.ceil(remaining/1000)<=6&&Math.ceil(remaining/1000)>0&&Math.round(remaining)%1000===0){audio.beep.play().catch(()=>{});} if(remaining>0){timerId=requestAnimationFrame(animate);}else{showAnswer(item);}};timerId=requestAnimationFrame(animate);}
+    function showAnswer(item){cancelAnimationFrame(timerId);dom.a.textContent=item.jp_w;dom.p.textContent=item.prnction;dom.a.classList.add("visible");dom.p.classList.add("visible");dom.status.textContent="✔ উত্তর";audio.result.play().catch(()=>{});speak(item.jp_w,()=>{setTimeout(nextCard,2000);});}
+    function nextCard(){if(words.length===0) return;const item=words[Math.floor(Math.random()*words.length)];showCard(item);}
+    function startApp(){updateHourTimer();nextCard();}
+    loadWords();
+  </script>
 </body>
 </html>
