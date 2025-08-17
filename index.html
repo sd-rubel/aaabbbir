@@ -14,7 +14,7 @@
       --muted: #94a3b8;
       --accent: #8b5cf6;
       --accent2: #22d3ee;
-      --answer: #fefce8;
+      --answer: #a5f3fc; /* Pastel cyan for Japanese text */
       --glow: rgba(139, 92, 246, 0.5);
       --glass-border: rgba(255, 255, 255, 0.2);
       --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
@@ -69,18 +69,16 @@
     }
 
     .logo {
+      position: absolute;
+      left: 20px;
+      top: 20px;
       width: 80px;
       height: 80px;
       border-radius: 50%;
       object-fit: cover;
-      margin: 0 auto 20px;
       border: 2px solid var(--glass-border);
       box-shadow: 0 0 15px var(--glow);
-      transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-      transform: scale(1.1);
+      z-index: 2;
     }
 
     .title {
@@ -102,7 +100,8 @@
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
       margin: 20px auto;
-      min-height: 250px;
+      height: 300px;
+      width: 90%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -178,15 +177,12 @@
     }
 
     .progress {
-      height: 10px;
+      height: 12px;
       background: var(--muted);
       border-radius: 8px;
       overflow: hidden;
       margin-top: 20px;
       box-shadow: 0 0 10px var(--glow);
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
     }
 
     .progress-bar {
@@ -194,20 +190,6 @@
       width: 0%;
       background: linear-gradient(90deg, var(--accent), var(--accent2));
       transition: width 0.5s ease;
-    }
-
-    .progress-timer {
-      font-size: 1rem;
-      color: var(--ink);
-      margin-left: 10px;
-      font-weight: 500;
-    }
-
-    .status {
-      margin-top: 15px;
-      font-size: 1.1rem;
-      color: var(--muted);
-      text-shadow: 0 0 5px var(--glow);
     }
 
     .subscribe {
@@ -221,21 +203,20 @@
       margin-bottom: 10px;
     }
 
-    .subscribe a {
-      display: inline-block;
-      background: var(--accent);
+    .subscribe button {
+      background: #ff0000; /* YouTube red */
       color: #fff;
       padding: 10px 20px;
-      border-radius: 10px;
-      text-decoration: none;
+      border: none;
+      border-radius: 4px;
       font-size: 1rem;
       font-weight: 600;
-      transition: background 0.3s ease, transform 0.3s ease;
-    }
-
-    .subscribe a:hover {
-      background: var(--accent2);
-      transform: scale(1.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: default;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
     }
 
     #particles {
@@ -247,7 +228,6 @@
 
     .particle {
       position: absolute;
-      background: var(--accent);
       border-radius: 50%;
       opacity: 0.6;
       animation: float 10s infinite;
@@ -263,19 +243,18 @@
       .title { font-size: 1.8rem; }
       .question, .answer { font-size: 1.6rem; }
       .pronunciation { font-size: 1rem; }
-      .card { padding: 30px; min-height: 200px; }
+      .card { padding: 30px; height: 250px; }
       .timer-container { width: 50px; height: 50px; }
       .timer { font-size: 1rem; }
-      .progress-timer { font-size: 0.9rem; }
-      .logo { width: 60px; height: 60px; }
+      .logo { width: 60px; height: 60px; left: 10px; top: 10px; }
       .subscribe p { font-size: 1rem; }
-      .subscribe a { font-size: 0.9rem; padding: 8px 16px; }
+      .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
     }
   </style>
 </head>
 <body>
+  <img src="https://github.com/sd-rubel/NihonGoBD/raw/main/profile.jpg" alt="NihonGoBD Logo" class="logo">
   <div class="app">
-    <img src="https://github.com/sd-rubel/NihonGoBD/raw/main/profile.jpg" alt="NihonGoBD Logo" class="logo">
     <h1 class="title">জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</h1>
     <div class="card">
       <div class="timer-container">
@@ -290,18 +269,17 @@
     </div>
     <div class="progress">
       <div id="progress-bar" class="progress-bar"></div>
-      <div id="progress-timer" class="progress-timer">60:00</div>
     </div>
     <div id="status-text" class="status">প্রস্তুত...</div>
     <div class="subscribe">
       <p>জাপানি ভাষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
-      <a href="https://www.youtube.com/@YourChannel" target="_blank"><i class="fa-solid fa-play"></i> সাবস্ক্রাইব</a>
+      <button><i class="fa-solid fa-play"></i> সাবস্ক্রাইব</button>
     </div>
   </div>
   <canvas id="particles"></canvas>
 
-  <audio id="beep-sound" src="https://freesound.org/data/previews/316/316847_4939433-lq.mp3" preload="auto"></audio>
-  <audio id="result-sound" src="https://freesound.org/data/previews/171/171671_2437358-lq.mp3" preload="auto"></audio>
+  <audio id="beep-sound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_4c9d3e5b9b.mp3" preload="auto"></audio>
+  <audio id="result-sound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_4c9d3e5b9b.mp3" preload="auto"></audio>
 
   <script>
     const DATA = [
@@ -320,6 +298,7 @@
     let timerInterval;
     let totalTime = 3600; // 1 hour in seconds
     let wordTimerColors = ['#22d3ee', '#8b5cf6', '#f43f5e', '#10b981', '#f97316'];
+    const particleColors = ['#8b5cf6', '#22d3ee', '#f43f5e', '#10b981', '#f97316'];
     const questionDuration = 5; // seconds
 
     const qEl = document.getElementById('q');
@@ -330,7 +309,6 @@
     const timerCircle = document.querySelector('.timer-circle circle');
     const statusEl = document.getElementById('status-text');
     const progressBar = document.getElementById('progress-bar');
-    const progressTimerEl = document.getElementById('progress-timer');
     const beepSound = document.getElementById('beep-sound');
     const resultSound = document.getElementById('result-sound');
 
@@ -338,26 +316,20 @@
       if ('speechSynthesis' in window && speechSynthesis.getVoices().some(voice => voice.lang.includes('ja'))) {
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'ja-JP';
-        u.onend = callback;
+        u.onend = () => {
+          setTimeout(callback, 500); // 0.5s pause after result sound
+        };
         speechSynthesis.speak(u);
       } else {
         console.warn('Japanese speech synthesis not available. Using fallback.');
-        setTimeout(callback, 2000); // Fallback to 2 seconds
+        setTimeout(callback, 2000);
       }
-    }
-
-    function formatTime(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
     function startHourTimer() {
       let timeLeft = totalTime;
-      progressTimerEl.textContent = formatTime(timeLeft);
       const hourInterval = setInterval(() => {
         timeLeft--;
-        progressTimerEl.textContent = formatTime(timeLeft);
         progressBar.style.width = `${((totalTime - timeLeft) / totalTime) * 100}%`;
         if (timeLeft <= 0) {
           timeLeft = totalTime;
@@ -366,8 +338,8 @@
       }, 1000);
     }
 
-    function getRandomColor() {
-      return wordTimerColors[Math.floor(Math.random() * wordTimerColors.length)];
+    function getRandomColor(array) {
+      return array[Math.floor(Math.random() * array.length)];
     }
 
     function nextCard() {
@@ -382,7 +354,7 @@
       timerEl.textContent = questionDuration;
       statusEl.textContent = "প্রশ্ন চলছে...";
       timerContainer.classList.add("visible");
-      timerCircle.style.stroke = getRandomColor();
+      timerCircle.style.stroke = getRandomColor(wordTimerColors);
 
       let timeLeft = questionDuration;
       timerCircle.style.strokeDashoffset = 188;
@@ -400,7 +372,7 @@
     }
 
     function showAnswer(item) {
-      qEl.textContent = item.q; // Keep question visible
+      qEl.textContent = item.q;
       aEl.textContent = item.a;
       pEl.textContent = item.p;
       aEl.classList.add("visible");
@@ -409,7 +381,7 @@
       resultSound.play().catch(() => console.warn('Result sound failed to play'));
 
       speak(item.a, () => {
-        setTimeout(nextCard, 2000); // Wait 2 seconds after speech
+        setTimeout(nextCard, 2000); // 2s after speech
       });
 
       // Fallback in case speechSynthesis hangs
@@ -417,7 +389,7 @@
         if (!timerContainer.classList.contains("visible")) {
           nextCard();
         }
-      }, 7000); // Max 7 seconds (5s question + 2s delay)
+      }, 7000);
     }
 
     // Particle Animation
@@ -427,6 +399,8 @@
     canvas.height = window.innerHeight;
 
     const particles = [];
+    let currentParticleColor = particleColors[0];
+
     function createParticle() {
       const size = Math.random() * 5 + 2;
       particles.push({
@@ -444,13 +418,18 @@
         p.y -= p.speed;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(139, 92, 246, ${0.6 - p.y / canvas.height})`;
+        ctx.fillStyle = currentParticleColor;
         ctx.fill();
         if (p.y < 0) particles.splice(i, 1);
       }
       if (particles.length < 50) createParticle();
       requestAnimationFrame(animateParticles);
     }
+
+    // Change particle color every 5 seconds
+    setInterval(() => {
+      currentParticleColor = getRandomColor(particleColors);
+    }, 5000);
 
     // Start the app
     window.onload = () => {
