@@ -97,6 +97,42 @@
       margin-top: 5px;
     }
 
+    .audio-controls {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .play-pause-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px var(--glow);
+      transition: background 0.3s ease;
+    }
+
+    .play-pause-btn:hover {
+      background: var(--accent2);
+    }
+
+    .volume-control {
+      width: 100px;
+      accent-color: var(--accent);
+    }
+
     .title {
       font-size: 2.5rem;
       margin-bottom: 1.5rem;
@@ -301,6 +337,9 @@
       .logo-container { left: 10px; top: 10px; width: 60px; }
       .logo { width: 60px; height: 60px; }
       .logo-text { font-size: 0.7rem; margin-top: 5px; }
+      .audio-controls { right: 10px; top: 10px; }
+      .play-pause-btn { width: 30px; height: 30px; font-size: 1rem; }
+      .volume-control { width: 80px; }
       .subscribe p { font-size: 1rem; }
       .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
       .social-links { flex-direction: column; gap: 10px; }
@@ -314,6 +353,12 @@
   <div class="logo-container">
     <img src="https://github.com/sd-rubel/NihonGoBD/raw/main/profile.jpg" alt="NihonGoBD Logo" class="logo">
     <div class="logo-text">Sd Rubel</div>
+  </div>
+  <div class="audio-controls">
+    <button id="play-pause-btn" class="play-pause-btn">
+      <i class="fas fa-play"></i>
+    </button>
+    <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.2">
   </div>
   <div class="app">
     <h1 class="title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> এর ভোকাবুলারি প্র্যাকটিস</h1>
@@ -335,7 +380,7 @@
     <div class="subscribe">
       <p>জাপানি ভাষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
       <button>
-        <i class="fas fa-play"></i>
+        <i class="fa-brands fa-youtube"></i>
         <span class="text">Subscribe</span>
       </button>
     </div>
@@ -351,7 +396,7 @@
     </div>
   </div>
 
-  <audio id="background-music" src="./background_music.mp3" preload="auto" autoplay loop></audio>
+  <audio id="background-music" src="./background_music.mp3" preload="auto" loop></audio>
   <audio id="beep-sound" src="./click.mp3" preload="auto"></audio>
   <audio id="result-sound" src="./success.mp3" preload="auto"></audio>
   <button id="unlock-audio" style="display: none;"></button>
@@ -361,11 +406,12 @@
     const backgroundMusic = document.getElementById('background-music');
     const beepSound = new Audio('./click.mp3');
     const resultSound = new Audio('./success.mp3');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const volumeControl = document.getElementById('volume-control');
 
-    // Set volumes
-    backgroundMusic.volume = 0.2; // 20% volume for background music
-    resultSound.volume = 0.5; // 50% volume for success sound
-    // beepSound remains at default volume (1.0)
+    // Set initial volume to 20%
+    backgroundMusic.volume = 0.2;
+    volumeControl.value = 0.2;
 
     // Ensure volume is set after audio is ready
     backgroundMusic.addEventListener('canplay', () => {
@@ -378,6 +424,33 @@
       console.error('Error loading background music:', e);
       document.getElementById('status-text').textContent = 'ব্যাকগ্রাউন্ড মিউজিক লোড করতে ব্যর্থ।';
     });
+
+    // Play/Pause button functionality
+    playPauseBtn.addEventListener('click', () => {
+      if (backgroundMusic.paused) {
+        backgroundMusic.play().then(() => {
+          playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          console.log('Background music playing');
+        }).catch((e) => {
+          console.error('Error playing background music:', e);
+          document.getElementById('status-text').textContent = 'মিউজিক প্লে করতে ব্যর্থ।';
+        });
+      } else {
+        backgroundMusic.pause();
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        console.log('Background music paused');
+      }
+    });
+
+    // Volume control functionality
+    volumeControl.addEventListener('input', () => {
+      backgroundMusic.volume = volumeControl.value;
+      console.log(`Volume set to ${Math.round(volumeControl.value * 100)}%`);
+    });
+
+    // Set result sound volume
+    resultSound.volume = 0.5; // 50% volume for success sound
+    // beepSound remains at default volume (1.0)
 
     // Unlock audio on user interaction
     document.getElementById('unlock-audio').click();
