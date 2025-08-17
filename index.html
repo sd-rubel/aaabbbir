@@ -238,7 +238,7 @@
     }
 
     .subscribe button .text {
-      animation: slide-text 4s ease-in-out infinite;
+      animation: slide-text 6s ease-in-out infinite;
     }
 
     @keyframes button-pop {
@@ -276,7 +276,7 @@
     }
 
     .social-links .social .text {
-      animation: slide-text 4s ease-in-out infinite;
+      animation: slide-text 6s ease-in-out infinite;
     }
 
     .social-links .facebook { background: rgba(24, 119, 242, 0.1); color: #1877f2; }
@@ -358,6 +358,11 @@
   <audio id="result-sound" src="https://github.com/sd-rubel/aaabbbir/raw/main/successed-295058.mp3" preload="auto"></audio>
 
   <script>
+    // Preload audio to prevent lag
+    const beepSound = new Audio('https://github.com/sd-rubel/aaabbbir/raw/main/mixkit-modern-technology-select-3124.wav');
+    const resultSound = new Audio('https://github.com/sd-rubel/aaabbbir/raw/main/successed-295058.mp3');
+    resultSound.volume = 0.5; // Reduce success sound volume by 50%
+
     const DATA = [
       { q: "“এখানে” জাপানিতে কী?", a: "ここ", p: "koko" },
       { q: "“সেখানে (কাছে)” জাপানিতে কী?", a: "そこ", p: "soko" },
@@ -384,8 +389,6 @@
     const timerFill = document.getElementById('timer-fill');
     const statusEl = document.getElementById('status-text');
     const progressBar = document.getElementById('progress-bar');
-    const beepSound = document.getElementById('beep-sound');
-    const resultSound = document.getElementById('result-sound');
 
     function speak(text, callback) {
       if ('speechSynthesis' in window && speechSynthesis.getVoices().some(voice => voice.lang.includes('ja'))) {
@@ -435,7 +438,11 @@
       timerInterval = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) { // Play beep only for seconds 5 to 1
-          beepSound.play().catch(() => console.warn('Beep sound failed to play'));
+          try {
+            beepSound.play().catch(() => console.warn('Beep sound failed to play'));
+          } catch (e) {
+            console.warn('Error playing beep sound:', e);
+          }
         }
         timerFill.style.width = `${(timeLeft / questionDuration) * 100}%`;
         if (timeLeft <= 0) {
@@ -454,7 +461,11 @@
       aEl.classList.add("visible");
       pEl.classList.add("visible");
       statusEl.textContent = "✔ উত্তর";
-      resultSound.play().catch(() => console.warn('Result sound failed to play'));
+      try {
+        resultSound.play().catch(() => console.warn('Result sound failed to play'));
+      } catch (e) {
+        console.warn('Error playing result sound:', e);
+      }
 
       speak(item.a, () => {
         setTimeout(nextCard, 2000); // 2s after speech
@@ -506,6 +517,10 @@
     setInterval(() => {
       currentParticleColor = getRandomColor(particleColors);
     }, 5000);
+
+    // Preload audio files
+    beepSound.load();
+    resultSound.load();
 
     // Start the app
     window.onload = () => {
