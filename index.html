@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</title>
-  <link rel="stylesheet" href="./css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -29,7 +29,7 @@
 
     body {
       font-family: 'Hind Siliguri', sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1), transparent 70%), linear-gradient(135deg, #0f172a, #1e293b);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -358,7 +358,7 @@
     <button id="play-pause-btn" class="play-pause-btn">
       <i class="fas fa-play"></i>
     </button>
-    <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.2">
+    <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.05">
   </div>
   <div class="app">
     <h1 class="title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> এর ভোকাবুলারি প্র্যাকটিস</h1>
@@ -378,7 +378,7 @@
     </div>
     <div id="status-text" class="status">প্রস্তুত...</div>
     <div class="subscribe">
-      <p>জাপানি ভাষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
+      <p>জাপানি ভাষা শিক্ষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
       <button>
         <i class="fa-brands fa-youtube"></i>
         <span class="text">Subscribe</span>
@@ -408,16 +408,11 @@
     const resultSound = new Audio('./success.mp3');
     const playPauseBtn = document.getElementById('play-pause-btn');
     const volumeControl = document.getElementById('volume-control');
+    let currentVolume = 0.05; // Store user’s volume choice
 
-    // Set initial volume to 20%
-    backgroundMusic.volume = 0.2;
-    volumeControl.value = 0.2;
-
-    // Ensure volume is set after audio is ready
-    backgroundMusic.addEventListener('canplay', () => {
-      backgroundMusic.volume = 0.2;
-      console.log('Background music volume set to 20%');
-    });
+    // Set initial volume to 5%
+    backgroundMusic.volume = currentVolume;
+    volumeControl.value = currentVolume;
 
     // Handle audio loading errors
     backgroundMusic.addEventListener('error', (e) => {
@@ -444,8 +439,9 @@
 
     // Volume control functionality
     volumeControl.addEventListener('input', () => {
-      backgroundMusic.volume = volumeControl.value;
-      console.log(`Volume set to ${Math.round(volumeControl.value * 100)}%`);
+      currentVolume = parseFloat(volumeControl.value);
+      backgroundMusic.volume = currentVolume;
+      console.log(`Volume set to ${Math.round(currentVolume * 100)}%`);
     });
 
     // Set result sound volume
@@ -477,7 +473,7 @@
     canvas.height = window.innerHeight;
 
     const particles = [];
-    let currentParticleColor = 'var(--accent)';
+    const particleColors = ['#8b5cf6', '#22d3ee', '#ec4899', '#3b82f6', '#10b981'];
 
     function createParticle() {
       const size = Math.random() * 5 + 2;
@@ -487,7 +483,8 @@
         size,
         speed: Math.random() * 2 + 1,
         opacity: 0.1 + Math.random() * 0.2,
-        rand: Math.random()
+        rand: Math.random(),
+        color: particleColors[Math.floor(Math.random() * particleColors.length)]
       });
     }
 
@@ -499,18 +496,13 @@
         ctx.beginPath();
         ctx.arc(p.x + (10 - 20 * p.rand), p.y, p.size, 0, Math.PI * 2);
         ctx.globalAlpha = p.opacity;
-        ctx.fillStyle = currentParticleColor;
+        ctx.fillStyle = p.color;
         ctx.fill();
         if (p.y < 0) particles.splice(i, 1);
       }
       if (particles.length < 30) createParticle();
       requestAnimationFrame(animateParticles);
     }
-
-    // Change particle color every 5 seconds
-    setInterval(() => {
-      currentParticleColor = currentParticleColor === 'var(--accent)' ? 'var(--accent2)' : 'var(--accent)';
-    }, 5000);
 
     // Load words from JSON
     async function loadWords() {
