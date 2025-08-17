@@ -165,43 +165,30 @@
       position: absolute;
       top: 15px;
       right: 20px;
-      width: 60px;
-      height: 60px;
+      width: 100px;
+      height: 8px;
       opacity: 0;
       transition: opacity var(--transition);
-      animation: timer-rotate 10s linear infinite;
     }
 
     .timer-container.visible {
       opacity: 1;
     }
 
-    @keyframes timer-rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--muted);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 0 5px var(--glow);
     }
 
-    .timer {
-      font-size: 1.2rem;
-      font-weight: bold;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
-
-    .timer-circle {
-      transform: rotate(-90deg);
-      transform-origin: center;
-    }
-
-    .timer-circle circle {
-      fill: none;
-      stroke-width: 6;
-      stroke-dasharray: 188;
-      stroke-dashoffset: 188;
-      transition: stroke-dashoffset linear;
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width linear;
     }
 
     .progress {
@@ -246,11 +233,23 @@
       cursor: default;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
       animation: button-pop 2s ease-in-out infinite alternate;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .subscribe button .text {
+      animation: slide-text 4s ease-in-out infinite;
     }
 
     @keyframes button-pop {
       0% { transform: scale(1); }
       100% { transform: scale(1.05); }
+    }
+
+    @keyframes slide-text {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(100%); }
+      100% { transform: translateX(0); }
     }
 
     .social-links {
@@ -260,23 +259,28 @@
       gap: 20px;
     }
 
-    .social-links a {
+    .social-links .social {
       display: flex;
       align-items: center;
       gap: 8px;
-      color: var(--ink);
-      text-decoration: none;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 0 10px var(--glow);
       font-size: 1rem;
       font-weight: 500;
-      transition: color 0.3s ease, transform 0.3s ease;
+      width: 220px;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .social-links a:hover {
-      transform: scale(1.05);
+    .social-links .social .text {
+      animation: slide-text 4s ease-in-out infinite;
     }
 
-    .social-links .facebook { color: #1877f2; }
-    .social-links .youtube { color: #ff0000; }
+    .social-links .facebook { background: rgba(24, 119, 242, 0.1); color: #1877f2; }
+    .social-links .youtube { background: rgba(255, 0, 0, 0.1); color: #ff0000; }
 
     #particles {
       position: absolute;
@@ -303,13 +307,12 @@
       .question, .answer { font-size: 1.8rem; }
       .pronunciation { font-size: 1.1rem; }
       .card { padding: 30px; height: 250px; }
-      .timer-container { width: 50px; height: 50px; }
-      .timer { font-size: 1rem; }
+      .timer-container { width: 80px; height: 6px; top: 10px; right: 10px; }
       .logo { width: 60px; height: 60px; left: 10px; top: 10px; }
       .subscribe p { font-size: 1rem; }
       .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
       .social-links { flex-direction: column; gap: 10px; }
-      .social-links a { font-size: 0.9rem; }
+      .social-links .social { font-size: 0.9rem; width: 180px; }
     }
   </style>
 </head>
@@ -319,10 +322,9 @@
     <h1 class="title">জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</h1>
     <div class="card">
       <div class="timer-container">
-        <svg class="timer-circle" width="60" height="60">
-          <circle cx="30" cy="30" r="27" />
-        </svg>
-        <div id="timer" class="timer">5</div>
+        <div class="timer-bar">
+          <div id="timer-fill" class="timer-fill"></div>
+        </div>
       </div>
       <div id="q" class="question"></div>
       <div id="a" class="answer"></div>
@@ -334,15 +336,20 @@
     <div id="status-text" class="status">প্রস্তুত...</div>
     <div class="subscribe">
       <p>জাপানি ভাষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
-      <button><i class="fa-solid fa-play"></i> সাবস্ক্রাইব</button>
+      <button>
+        <i class="fa-solid fa-play"></i>
+        <span class="text">সাবস্ক্রাইব</span>
+      </button>
     </div>
     <div class="social-links">
-      <a href="https://facebook.com/sdnrubel" class="facebook" target="_blank">
-        <i class="fa-brands fa-facebook-f"></i> facebook.com/sdnrubel
-      </a>
-      <a href="https://youtube.com/@sdnrubel" class="youtube" target="_blank">
-        <i class="fa-brands fa-youtube"></i> youtube.com/@sdnrubel
-      </a>
+      <div class="social facebook">
+        <i class="fa-brands fa-facebook-f"></i>
+        <span class="text">facebook.com/sdnrubel</span>
+      </div>
+      <div class="social youtube">
+        <i class="fa-brands fa-youtube"></i>
+        <span class="text">youtube.com/@sdnrubel</span>
+      </div>
     </div>
   </div>
   <canvas id="particles"></canvas>
@@ -373,9 +380,8 @@
     const qEl = document.getElementById('q');
     const aEl = document.getElementById('a');
     const pEl = document.getElementById('p');
-    const timerEl = document.getElementById('timer');
     const timerContainer = document.querySelector('.timer-container');
-    const timerCircle = document.querySelector('.timer-circle circle');
+    const timerFill = document.getElementById('timer-fill');
     const statusEl = document.getElementById('status-text');
     const progressBar = document.getElementById('progress-bar');
     const beepSound = document.getElementById('beep-sound');
@@ -420,18 +426,18 @@
       qEl.classList.add("visible");
       aEl.classList.remove("visible");
       pEl.classList.remove("visible");
-      timerEl.textContent = questionDuration;
       statusEl.textContent = "প্রশ্ন চলছে...";
       timerContainer.classList.add("visible");
-      timerCircle.style.stroke = getRandomColor(wordTimerColors);
+      timerFill.style.background = `linear-gradient(90deg, ${getRandomColor(wordTimerColors)}, ${getRandomColor(wordTimerColors)})`;
 
       let timeLeft = questionDuration;
-      timerCircle.style.strokeDashoffset = 188;
+      timerFill.style.width = '100%';
       timerInterval = setInterval(() => {
         timeLeft--;
-        timerEl.textContent = timeLeft;
-        timerCircle.style.strokeDashoffset = (188 * timeLeft) / questionDuration;
-        beepSound.play().catch(() => console.warn('Beep sound failed to play'));
+        if (timeLeft > 0) { // Play beep only for seconds 5 to 1
+          beepSound.play().catch(() => console.warn('Beep sound failed to play'));
+        }
+        timerFill.style.width = `${(timeLeft / questionDuration) * 100}%`;
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
           timerContainer.classList.remove("visible");
@@ -441,7 +447,7 @@
     }
 
     function showAnswer(item) {
-      clearInterval(timerInterval); // Stop beep sound
+      clearInterval(timerInterval); // Ensure beep sound stops
       qEl.textContent = item.q;
       aEl.textContent = item.a;
       pEl.textContent = item.p;
