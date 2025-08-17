@@ -72,27 +72,29 @@
       z-index: 1;
     }
 
-    .logo {
+    .logo-container {
       position: absolute;
       left: 20px;
       top: 20px;
+      width: 80px;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .logo {
       width: 80px;
       height: 80px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid var(--glass-border);
       box-shadow: 0 0 15px var(--glow);
-      z-index: 2;
     }
 
     .logo-text {
-      position: absolute;
-      left: 60px; /* Center of logo (20px left + 80px/2) */
-      top: 110px; /* Below logo (80px height + gap) */
       font-size: 0.9rem;
       color: var(--ink);
       text-shadow: 0 0 5px var(--glow);
-      z-index: 2;
+      margin-top: 5px;
     }
 
     .title {
@@ -280,7 +282,7 @@
       font-weight: 500;
       width: 220px;
       justify-content: center;
-      position: relative;
+      position:{keeps} relative;
       overflow: hidden;
       color: #fff; /* White text */
     }
@@ -296,8 +298,9 @@
       .card { padding: 30px; height: 250px; }
       .timer-bar { width: 80px; height: 6px; }
       .timer-count { font-size: 1.4rem; }
-      .logo { width: 60px; height: 60px; left: 10px; top: 10px; }
-      .logo-text { font-size: 0.7rem; top: 80px; left: 40px; } /* Center of logo (10px left + 60px/2) */
+      .logo-container { left: 10px; top: 10px; width: 60px; }
+      .logo { width: 60px; height: 60px; }
+      .logo-text { font-size: 0.7rem; margin-top: 5px; }
       .subscribe p { font-size: 1rem; }
       .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
       .social-links { flex-direction: column; gap: 10px; }
@@ -308,8 +311,10 @@
 </head>
 <body>
   <canvas id="particles"></canvas>
-  <img src="https://github.com/sd-rubel/NihonGoBD/raw/main/profile.jpg" alt="NihonGoBD Logo" class="logo">
-  <div class="logo-text">Sd Rubel</div>
+  <div class="logo-container">
+    <img src="https://github.com/sd-rubel/NihonGoBD/raw/main/profile.jpg" alt="NihonGoBD Logo" class="logo">
+    <div class="logo-text">Sd Rubel</div>
+  </div>
   <div class="app">
     <h1 class="title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> এর ভোকাবুলারি প্র্যাকটিস</h1>
     <div class="card">
