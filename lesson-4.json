@@ -1,0 +1,344 @@
+[
+  {
+    "en_w": "Now",
+    "bn_w": "এখন",
+    "hi_w": "अब",
+    "np_w": "अहिले",
+    "si_w": "දැන්",
+    "jp_w": "いま",
+    "prnction": "Ima"
+  },
+  {
+    "en_w": "O'clock",
+    "bn_w": "টা",
+    "hi_w": "बजे",
+    "np_w": "बजे",
+    "si_w": "ට",
+    "jp_w": "～じ",
+    "prnction": "~ji"
+  },
+  {
+    "en_w": "Minute",
+    "bn_w": "মিনিট",
+    "hi_w": "मिनट",
+    "np_w": "मिनेट",
+    "si_w": "මිනිත්තුව",
+    "jp_w": "～ふん/～ぷん",
+    "prnction": "~fun/~pun"
+  },
+  {
+    "en_w": "Half",
+    "bn_w": "সাড়ে / আধা",
+    "hi_w": "साढ़े",
+    "np_w": "साढे",
+    "si_w": "හමාර",
+    "jp_w": "はん",
+    "prnction": "Han"
+  },
+  {
+    "en_w": "A.M. / Morning",
+    "bn_w": "সকাল",
+    "hi_w": "सुबह",
+    "np_w": "बिहान",
+    "si_w": "පෙරවරු / උදේ",
+    "jp_w": "ごぜん",
+    "prnction": "Gozen"
+  },
+  {
+    "en_w": "P.M. / Afternoon",
+    "bn_w": "বিকাল / সন্ধ্যা",
+    "hi_w": "दोपहर / शाम",
+    "np_w": "दिउँसो / साँझ",
+    "si_w": "පස්වරු / සවස",
+    "jp_w": "ごご",
+    "prnction": "Gogo"
+  },
+  {
+    "en_w": "Morning",
+    "bn_w": "সকাল",
+    "hi_w": "सुबह",
+    "np_w": "बिहान",
+    "si_w": "උදේ",
+    "jp_w": "あさ",
+    "prnction": "Asa"
+  },
+  {
+    "en_w": "Daytime / Noon",
+    "bn_w": "দিন / দুপুর",
+    "hi_w": "दिन / दोपहर",
+    "np_w": "दिन / दिउँसो",
+    "si_w": "දිවා කාලය / දහවල්",
+    "jp_w": "ひる",
+    "prnction": "Hiru"
+  },
+  {
+    "en_w": "Night",
+    "bn_w": "রাত",
+    "hi_w": "रात",
+    "np_w": "राति",
+    "si_w": "රාත්‍රිය",
+    "jp_w": "ばん",
+    "prnction": "Ban"
+  },
+  {
+    "en_w": "The day before yesterday",
+    "bn_w": "গত পরশু",
+    "hi_w": "परसों (बीता हुआ)",
+    "np_w": "अस्ति",
+    "si_w": "පෙරේදා",
+    "jp_w": "おととい",
+    "prnction": "Ototoi"
+  },
+  {
+    "en_w": "Yesterday",
+    "bn_w": "গতকাল",
+    "hi_w": "कल (बीता हुआ)",
+    "np_w": "हिजो",
+    "si_w": "ඊයේ",
+    "jp_w": "きのう",
+    "prnction": "Kinou"
+  },
+  {
+    "en_w": "Today",
+    "bn_w": "আজ",
+    "hi_w": "आज",
+    "np_w": "आज",
+    "si_w": "අද",
+    "jp_w": "きょう",
+    "prnction": "Kyou"
+  },
+  {
+    "en_w": "Tomorrow",
+    "bn_w": "আগামীকাল",
+    "hi_w": "कल (आने वाला)",
+    "np_w": "भोलि",
+    "si_w": "හෙට",
+    "jp_w": "あした",
+    "prnction": "Ashita"
+  },
+  {
+    "en_w": "The day after tomorrow",
+    "bn_w": "আগামী পরশু",
+    "hi_w": "परसों (आने वाला)",
+    "np_w": "पर्सी",
+    "si_w": "අනිද්දා",
+    "jp_w": "あさって",
+    "prnction": "Asatte"
+  },
+  {
+    "en_w": "This morning",
+    "bn_w": "আজ সকালে",
+    "hi_w": "आज सुबह",
+    "np_w": "आज बिहान",
+    "si_w": "අද උදේ",
+    "jp_w": "けさ",
+    "prnction": "Kesa"
+  },
+  {
+    "en_w": "This evening / Tonight",
+    "bn_w": "আজ সন্ধ্যায় / আজ রাতে",
+    "hi_w": "आज शाम / आज रात",
+    "np_w": "आज साँझ / आज राति",
+    "si_w": "අද සවස / අද රාත්‍රියේ",
+    "jp_w": "こんばん",
+    "prnction": "Konban"
+  },
+  {
+    "en_w": "Rest / Holiday",
+    "bn_w": "ছুটি / বিশ্রাম",
+    "hi_w": "छुट्टी / आराम",
+    "np_w": "बिदा / आराम",
+    "si_w": "නිවාඩු / විවේකය",
+    "jp_w": "やすみ",
+    "prnction": "Yasumi"
+  },
+  {
+    "en_w": "Lunch break",
+    "bn_w": "দুপুরের খাবার বিরতি",
+    "hi_w": "दोपहर का भोजन अवकाश",
+    "np_w": "दिउँसोको खानाको छुट्टी",
+    "si_w": "දිවා ආහාර විවේකය",
+    "jp_w": "ひるやすみ",
+    "prnction": "Hiruyasumi"
+  },
+  {
+    "en_w": "Examination",
+    "bn_w": "পরীক্ষা",
+    "hi_w": "परीक्षा",
+    "np_w": "परीक्षा",
+    "si_w": "විභාගය",
+    "jp_w": "しけん",
+    "prnction": "Shiken"
+  },
+  {
+    "en_w": "Meeting",
+    "bn_w": "সভা",
+    "hi_w": "बैठक",
+    "np_w": "बैठक",
+    "si_w": "රැස්වීම",
+    "jp_w": "かいぎ",
+    "prnction": "Kaigi"
+  },
+  {
+    "en_w": "Movie",
+    "bn_w": "সিনেমা",
+    "hi_w": "फिल्म",
+    "np_w": "फिल्म",
+    "si_w": "චිත්‍රපටය",
+    "jp_w": "えいが",
+    "prnction": "Eiga"
+  },
+  {
+    "en_w": "Every morning",
+    "bn_w": "প্রতিদিন সকালে",
+    "hi_w": "हर सुबह",
+    "np_w": "हरेक बिहान",
+    "si_w": "සෑම උදෑසනකම",
+    "jp_w": "まいあさ",
+    "prnction": "Maiasa"
+  },
+  {
+    "en_w": "Every night",
+    "bn_w": "প্রতিদিন রাতে",
+    "hi_w": "हर रात",
+    "np_w": "हरेक रात",
+    "si_w": "සෑම රාත්‍රියකම",
+    "jp_w": "まいばん",
+    "prnction": "Maiban"
+  },
+  {
+    "en_w": "Every day",
+    "bn_w": "প্রতিদিন",
+    "hi_w": "हर दिन",
+    "np_w": "हरेक दिन",
+    "si_w": "සෑම දිනකම",
+    "jp_w": "まいにち",
+    "prnction": "Mainichi"
+  },
+  {
+    "en_w": "Sunday",
+    "bn_w": "রবিবার",
+    "hi_w": "रविवार",
+    "np_w": "आइतबार",
+    "si_w": "ඉරිදා",
+    "jp_w": "にちようび",
+    "prnction": "Nichiyoubi"
+  },
+  {
+    "en_w": "Monday",
+    "bn_w": "সোমবার",
+    "hi_w": "सोमवार",
+    "np_w": "सोमबार",
+    "si_w": "සඳුදා",
+    "jp_w": "げつようび",
+    "prnction": "Getsuyoubi"
+  },
+  {
+    "en_w": "Tuesday",
+    "bn_w": "মঙ্গলবার",
+    "hi_w": "मंगलवार",
+    "np_w": "मङ्गलबार",
+    "si_w": "අඟහරුවාදා",
+    "jp_w": "かようび",
+    "prnction": "Kayoubi"
+  },
+  {
+    "en_w": "Wednesday",
+    "bn_w": "বুধবার",
+    "hi_w": "बुधवार",
+    "np_w": "बुधबार",
+    "si_w": "බදාදා",
+    "jp_w": "すいようび",
+    "prnction": "Suiyoubi"
+  },
+  {
+    "en_w": "Thursday",
+    "bn_w": "বৃহস্পতিবার",
+    "hi_w": "गुरुवार",
+    "np_w": "बिहीबार",
+    "si_w": "බ්‍රහස්පතින්දා",
+    "jp_w": "もくようび",
+    "prnction": "Mokuyoubi"
+  },
+  {
+    "en_w": "Friday",
+    "bn_w": "শুক্রবার",
+    "hi_w": "शुक्रवार",
+    "np_w": "शुक्रबार",
+    "si_w": "සිකුරාදා",
+    "jp_w": "きんようび",
+    "prnction": "Kin'youbi"
+  },
+  {
+    "en_w": "Saturday",
+    "bn_w": "শনিবার",
+    "hi_w": "शनिवार",
+    "np_w": "शनिबार",
+    "si_w": "සෙනසුරාදා",
+    "jp_w": "どようび",
+    "prnction": "Doyoubi"
+  },
+  {
+    "en_w": "What day of the week?",
+    "bn_w": "সপ্তাহের কোন দিন?",
+    "hi_w": "सप्ताह का कौन सा दिन?",
+    "np_w": "सप्ताहको कुन दिन?",
+    "si_w": "සතියේ කුමන දිනයද?",
+    "jp_w": "なんようび",
+    "prnction": "Nanyoubi"
+  },
+  {
+    "en_w": "What time?",
+    "bn_w": "কয়টা?",
+    "hi_w": "कितने बजे?",
+    "np_w": "कति बजे?",
+    "si_w": "කීයටද?",
+    "jp_w": "なんじ",
+    "prnction": "Nanji"
+  },
+  {
+    "en_w": "How many minutes?",
+    "bn_w": "কত মিনিট?",
+    "hi_w": "कितने मिनट?",
+    "np_w": "कति मिनेट?",
+    "si_w": "කී මිනිත්තුද?",
+    "jp_w": "なんぷん",
+    "prnction": "Nanpun"
+  },
+  {
+    "en_w": "From ~",
+    "bn_w": "থেকে",
+    "hi_w": "से",
+    "np_w": "देखि",
+    "si_w": "සිට",
+    "jp_w": "～から",
+    "prnction": "~kara"
+  },
+  {
+    "en_w": "Up to ~ / Until ~",
+    "bn_w": "পর্যন্ত",
+    "hi_w": "तक",
+    "np_w": "सम्म",
+    "si_w": "දක්වා",
+    "jp_w": "～まで",
+    "prnction": "~made"
+  },
+  {
+    "en_w": "~ and ~ (conjunction)",
+    "bn_w": "এবং / ও",
+    "hi_w": "और",
+    "np_w": "र",
+    "si_w": "හා",
+    "jp_w": "～と",
+    "prnction": "~to"
+  },
+  {
+    "en_w": "That's tough, isn't it?",
+    "bn_w": "এটা কঠিন, তাই না?",
+    "hi_w": "यह मुश्किल है, है ना?",
+    "np_w": "यो गाह्रो छ, हैन र?",
+    "si_w": "ඒක අමාරුයි, නේද?",
+    "jp_w": "たいへんですね",
+    "prnction": "Taihen desu ne"
+  }
+]
