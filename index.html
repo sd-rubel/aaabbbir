@@ -2,23 +2,29 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0f172a" />
   <title>জাপানি ফ্ল্যাশকার্ড প্র্যাকটিস</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Roboto:wght@400;700&family=Noto+Sans+Sinhala:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0f172a;
-      --card: rgba(30, 41, 59, 0.85);
+      --card: rgba(30, 41, 59, 0.9);
       --ink: #f1f5f9;
       --muted: #94a3b8;
       --accent: #8b5cf6;
       --accent2: #22d3ee;
-      --answer: #a5f3fc; /* Pastel cyan for Japanese text */
-      --glow: rgba(139, 92, 246, 0.5);
+      --answer: #a5f3fc;
+      --glow: rgba(139, 92, 246, 0.6);
       --glass-border: rgba(255, 255, 255, 0.2);
       --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
       --transition: 0.6s ease-in-out;
+      --hindi: #facc15;
+      --nepali: #22c55e;
+      --sinhala: #f472b6;
     }
 
     * {
@@ -27,23 +33,28 @@
       padding: 0;
     }
 
-    body {
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       font-family: 'Hind Siliguri', sans-serif;
-      background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1), transparent 70%), linear-gradient(135deg, #0f172a, #1e293b);
-      min-height: 100vh;
+      background: radial-gradient(circle at center, rgba(139, 92, 246, 0.2), transparent 70%), linear-gradient(135deg, #0f172a, #1e293b);
+      color: var(--ink);
       display: flex;
       justify-content: center;
       align-items: center;
-      color: var(--ink);
-      overflow: hidden;
       position: relative;
     }
 
     #particles {
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: -1;
       pointer-events: none;
+      transform: rotate(90deg);
+      transform-origin: center;
+      width: 100vh;
+      height: 100vw;
     }
 
     .particle {
@@ -56,26 +67,34 @@
     @keyframes float {
       0% { transform: translateY(0) translateX(0); opacity: 0.1; }
       50% { opacity: 0.3; }
-      100% { transform: translateY(-100vh) translateX(calc(10px - 20px * var(--rand))); opacity: 0; }
+      100% { transform: translateY(-100vw) translateX(calc(10px - 20px * var(--rand))); opacity: 0; }
     }
 
     .app {
-      width: 90vw;
-      max-width: 1000px;
-      padding: 40px;
+      width: 100vh;
+      height: 100vw;
+      max-width: 100vh;
+      max-height: 100vw;
+      padding: 20px;
       text-align: center;
-      border-radius: 25px;
-      backdrop-filter: blur(15px);
+      border-radius: 0;
+      backdrop-filter: blur(12px);
       background: var(--card);
       box-shadow: var(--glass-shadow);
       position: relative;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      transform: rotate(90deg);
+      transform-origin: center;
     }
 
     .logo-container {
       position: absolute;
-      left: 20px;
       top: 20px;
+      left: 45px; /* Moved 25px right from 20px */
       width: 80px;
       text-align: center;
       z-index: 2;
@@ -152,39 +171,48 @@
 
     .card {
       position: relative;
-      padding: 50px;
+      padding: 30px;
       border-radius: 20px;
-      border: 1px solid var(--glass-border);
+      border: 2px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
-      margin: 20px auto;
-      height: 300px;
-      width: 90%;
+      margin: 15px 0;
+      flex-grow: 1;
+      width: 100%;
+      max-width: 90%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-      overflow: hidden;
-    }
-
-    .question,
-    .answer,
-    .pronunciation {
-      font-weight: 700;
-      opacity: 0;
-      transform: scale(0.8);
-      transition: opacity var(--transition), transform var(--transition);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
     }
 
     .question {
-      font-size: 2.4rem;
+      font-size: 2rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity var(--transition), transform var(--transition);
+      margin-bottom: 10px;
     }
+
+    .question div {
+      margin: 5px 0;
+    }
+
+    .en { color: var(--accent2); font-family: 'Roboto', sans-serif; }
+    .bn { color: var(--ink); font-family: 'Hind Siliguri', sans-serif; }
+    .hi { color: var(--hindi); font-family: 'Hind Siliguri', sans-serif; }
+    .np { color: var(--nepali); font-family: 'Hind Siliguri', sans-serif; }
+    .si { color: var(--sinhala); font-family: 'Noto Sans Sinhala', sans-serif; }
 
     .answer {
       font-size: 3rem;
       font-weight: 800;
       color: var(--answer);
       text-shadow: 0 0 15px var(--glow);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity var(--transition), transform var(--transition);
     }
 
     .pronunciation {
@@ -192,6 +220,9 @@
       font-weight: 400;
       color: var(--muted);
       margin-top: 10px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity var(--transition), transform var(--transition);
     }
 
     .visible {
@@ -214,14 +245,6 @@
       opacity: 1;
     }
 
-    .timer-count {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--ink);
-      text-shadow: 0 0 5px var(--glow);
-      margin-top: 5px;
-    }
-
     .timer-bar {
       width: 100px;
       height: 8px;
@@ -234,8 +257,16 @@
     .timer-fill {
       height: 100%;
       width: 100%;
-      background: var(--accent); /* Solid theme color */
+      background: var(--accent);
       transition: width linear;
+    }
+
+    .timer-count {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-shadow: 0 0 5px var(--glow);
+      margin-top: 5px;
     }
 
     .progress {
@@ -243,30 +274,38 @@
       background: var(--muted);
       border-radius: 8px;
       overflow: hidden;
-      margin-top: 20px;
+      margin: 15px 0;
       box-shadow: 0 0 10px var(--glow);
+      width: 90%;
     }
 
     .progress-bar {
       height: 100%;
       width: 0%;
-      background: var(--accent); /* Solid theme color */
+      background: var(--accent);
       transition: width 0.5s ease;
     }
 
     .subscribe {
-      margin-top: 20px;
+      margin: 20px 0;
       text-align: center;
+      width: 90%;
     }
 
-    .subscribe p {
+    .subscribe-text {
       font-size: 1.2rem;
       color: var(--ink);
       margin-bottom: 10px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .subscribe-text.visible {
+      opacity: 1;
     }
 
     .subscribe button {
-      background: #ff0000; /* YouTube red */
+      background: #ff0000;
       color: #fff;
       padding: 10px 20px;
       border: none;
@@ -280,12 +319,6 @@
       cursor: default;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
       animation: button-pop 2s ease-in-out infinite alternate;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .subscribe button .text {
-      animation: slide-text 6s ease-in-out infinite;
     }
 
     @keyframes button-pop {
@@ -293,17 +326,12 @@
       100% { transform: scale(1.05); }
     }
 
-    @keyframes slide-text {
-      0% { transform: translateX(0); }
-      50% { transform: translateX(100%); }
-      100% { transform: translateX(0); }
-    }
-
     .social-links {
-      margin-top: 15px;
+      margin: 15px 0;
       display: flex;
       justify-content: center;
       gap: 20px;
+      width: 90%;
     }
 
     .social-links .social {
@@ -318,33 +346,54 @@
       font-weight: 500;
       width: 220px;
       justify-content: center;
-      position: relative;
-      overflow: hidden;
-      color: #fff; /* White text */
+      color: #fff;
     }
 
-    .social-links .facebook { background: #1877f2; } /* Facebook blue */
-    .social-links .youtube { background: #ff0000; } /* YouTube red */
+    .social-links .facebook { background: #1877f2; }
+    .social-links .youtube { background: #ff0000; }
 
-    @media (max-width: 600px) {
-      .title { font-size: 1.8rem; }
-      .question { font-size: 2rem; }
-      .answer { font-size: 2.2rem; }
+    @media (orientation: portrait) {
+      .app { padding: 15px; }
+      .title { font-size: 2rem; }
+      .card { padding: 20px; max-width: 95%; }
+      .question { font-size: 1.8rem; }
+      .answer { font-size: 2.5rem; }
       .pronunciation { font-size: 1.1rem; }
-      .card { padding: 30px; height: 250px; }
+      .timer-container { top: 10px; right: 15px; }
       .timer-bar { width: 80px; height: 6px; }
       .timer-count { font-size: 1.4rem; }
-      .logo-container { left: 10px; top: 10px; width: 60px; }
+      .logo-container { top: 15px; left: 40px; width: 60px; }
       .logo { width: 60px; height: 60px; }
-      .logo-text { font-size: 0.7rem; margin-top: 5px; }
-      .audio-controls { right: 10px; top: 10px; }
+      .logo-text { font-size: 0.7rem; }
+      .audio-controls { right: 15px; top: 15px; }
       .play-pause-btn { width: 30px; height: 30px; font-size: 1rem; }
       .volume-control { width: 80px; }
-      .subscribe p { font-size: 1rem; }
+      .subscribe-text { font-size: 1rem; }
       .subscribe button { font-size: 0.9rem; padding: 8px 16px; }
       .social-links { flex-direction: column; gap: 10px; }
       .social-links .social { font-size: 0.9rem; width: 180px; }
       .particle { width: 4px; height: 4px; }
+    }
+
+    @media (orientation: portrait) and (max-width: 500px) {
+      .app { padding: 10px; }
+      .title { font-size: 1.8rem; }
+      .card { padding: 15px; }
+      .question { font-size: 1.5rem; }
+      .answer { font-size: 2.2rem; }
+      .pronunciation { font-size: 1rem; }
+      .timer-container { top: 8px; right: 10px; }
+      .timer-bar { width: 70px; height: 5px; }
+      .timer-count { font-size: 1.2rem; }
+      .logo-container { top: 10px; left: 35px; width: 50px; }
+      .logo { width: 50px; height: 50px; }
+      .logo-text { font-size: 0.6rem; }
+      .audio-controls { right: 10px; top: 10px; }
+      .play-pause-btn { width: 25px; height: 25px; font-size: 0.8rem; }
+      .volume-control { width: 70px; }
+      .subscribe-text { font-size: 0.9rem; }
+      .subscribe button { font-size: 0.8rem; padding: 7px 14px; }
+      .social-links .social { font-size: 0.8rem; width: 160px; }
     }
   </style>
 </head>
@@ -361,7 +410,7 @@
     <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.05">
   </div>
   <div class="app">
-    <h1 class="title"><span class="highlight">N5</span> এর <span class="highlight">Lesson-1</span> এর ভোকাবুলারি প্র্যাকটিস</h1>
+    <h1 class="title">Minna No Nihongo <span class="highlight">Lesson-1</span> Test Yourself</h1>
     <div class="card">
       <div class="timer-container">
         <div class="timer-bar">
@@ -369,7 +418,13 @@
         </div>
         <div id="timer-count" class="timer-count"></div>
       </div>
-      <div id="q" class="question"></div>
+      <div id="q" class="question">
+        <div id="en" class="en"></div>
+        <div id="bn" class="bn"></div>
+        <div id="hi" class="hi"></div>
+        <div id="np" class="np"></div>
+        <div id="si" class="si"></div>
+      </div>
       <div id="a" class="answer"></div>
       <div id="p" class="pronunciation"></div>
     </div>
@@ -378,7 +433,7 @@
     </div>
     <div id="status-text" class="status">প্রস্তুত...</div>
     <div class="subscribe">
-      <p>জাপানি ভাষা শিক্ষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন</p>
+      <div id="subscribe-text" class="subscribe-text"></div>
       <button>
         <i class="fa-brands fa-youtube"></i>
         <span class="text">Subscribe</span>
@@ -402,62 +457,79 @@
   <button id="unlock-audio" style="display: none;"></button>
 
   <script>
-    // Reference to HTML audio elements
+    // Fullscreen and orientation lock
+    function enterFullscreenAndLock() {
+      const element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen().then(() => {
+          const backgroundMusic = document.getElementById('background-music');
+          backgroundMusic.play().then(() => {
+            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-pause"></i>';
+            console.log('Background music playing');
+          }).catch((e) => {
+            console.error('Error playing background music:', e);
+            document.getElementById('status-text').textContent = 'মিউজিক প্লে করতে ব্যর্থ। টাচ করুন।';
+          });
+        }).catch((e) => console.error('Fullscreen error:', e));
+      }
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch((e) => console.error('Orientation lock error:', e));
+      }
+    }
+
+    // Audio elements
     const backgroundMusic = document.getElementById('background-music');
-    const beepSound = new Audio('./click.mp3');
-    const resultSound = new Audio('./success.mp3');
+    const beepSound = document.getElementById('beep-sound');
+    const resultSound = document.getElementById('result-sound');
     const playPauseBtn = document.getElementById('play-pause-btn');
     const volumeControl = document.getElementById('volume-control');
-    let currentVolume = 0.05; // Store user’s volume choice
+    let currentVolume = 0.05;
 
-    // Set initial volume to 5%
     backgroundMusic.volume = currentVolume;
+    beepSound.volume = 0.5;
+    resultSound.volume = 0.5;
     volumeControl.value = currentVolume;
 
-    // Handle audio loading errors
+    // Handle audio errors
     backgroundMusic.addEventListener('error', (e) => {
       console.error('Error loading background music:', e);
       document.getElementById('status-text').textContent = 'ব্যাকগ্রাউন্ড মিউজিক লোড করতে ব্যর্থ।';
     });
 
-    // Play/Pause button functionality
-    playPauseBtn.addEventListener('click', () => {
+    // Auto-play on touch for mobile
+    document.addEventListener('touchstart', () => {
       if (backgroundMusic.paused) {
         backgroundMusic.play().then(() => {
           playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-          console.log('Background music playing');
+          console.log('Background music playing via touch');
         }).catch((e) => {
-          console.error('Error playing background music:', e);
-          document.getElementById('status-text').textContent = 'মিউজিক প্লে করতে ব্যর্থ।';
+          console.error('Touch play error:', e);
+          document.getElementById('status-text').textContent = 'মিউজিক প্লে করতে ব্যর্থ। আবার টাচ করুন।';
         });
-      } else {
-        backgroundMusic.pause();
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        console.log('Background music paused');
       }
-    });
+    }, { once: true });
 
-    // Volume control functionality
     volumeControl.addEventListener('input', () => {
       currentVolume = parseFloat(volumeControl.value);
       backgroundMusic.volume = currentVolume;
       console.log(`Volume set to ${Math.round(currentVolume * 100)}%`);
     });
 
-    // Set result sound volume
-    resultSound.volume = 0.5; // 50% volume for success sound
-    // beepSound remains at default volume (1.0)
-
-    // Unlock audio on user interaction
+    // Unlock audio on mobile
     document.getElementById('unlock-audio').click();
 
     let DATA = [];
     let currentIndex = -1;
     let timerInterval;
-    let totalTime = 3600; // 1 hour in seconds
-    const questionDuration = 5000; // 5 seconds in milliseconds
+    let totalTime = 3600; // 1 hour
+    const questionDuration = 5000; // 5 seconds
 
     const qEl = document.getElementById('q');
+    const enEl = document.getElementById('en');
+    const bnEl = document.getElementById('bn');
+    const hiEl = document.getElementById('hi');
+    const npEl = document.getElementById('np');
+    const siEl = document.getElementById('si');
     const aEl = document.getElementById('a');
     const pEl = document.getElementById('p');
     const timerContainer = document.querySelector('.timer-container');
@@ -465,18 +537,39 @@
     const timerFill = document.getElementById('timer-fill');
     const statusEl = document.getElementById('status-text');
     const progressBar = document.getElementById('progress-bar');
+    const subscribeText = document.getElementById('subscribe-text');
+
+    // Subscribe text rotation
+    const subscribeMessages = [
+      { lang: 'en', text: 'Subscribe to get Japanese language learning videos' },
+      { lang: 'bn', text: 'জাপানি ভাষা শিক্ষা বিষয়ক ভিডিও পেতে সাবস্ক্রাইব করুন' },
+      { lang: 'hi', text: 'जापानी भाषा सीखने के वीडियो प्राप्त करने के लिए सब्सक्राइब करें' },
+      { lang: 'np', text: 'जापानी भाषा सिकाइ सम्बन्धी भिडियोहरू प्राप्त गर्न सब्सक्राइब गर्नुहोस्' },
+      { lang: 'si', text: 'ජපන් භාෂා ඉගෙනුම් වීඩියෝ ලබා ගැනීමට දායක වන්න' }
+    ];
+    let currentMessageIndex = 0;
+
+    function rotateSubscribeText() {
+      subscribeText.classList.remove('visible');
+      setTimeout(() => {
+        subscribeText.textContent = subscribeMessages[currentMessageIndex].text;
+        subscribeText.classList.add('visible');
+        currentMessageIndex = (currentMessageIndex + 1) % subscribeMessages.length;
+        setTimeout(rotateSubscribeText, 4000); // Change every 4 seconds
+      }, 500); // Delay for fade-out
+    }
 
     // Particle Animation
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerHeight;
+    canvas.height = window.innerWidth;
 
     const particles = [];
     const particleColors = ['#8b5cf6', '#22d3ee', '#ec4899', '#3b82f6', '#10b981'];
 
     function createParticle() {
-      const size = Math.random() * 5 + 2;
+      const size = Math.random() * 4 + 2;
       particles.push({
         x: Math.random() * canvas.width,
         y: canvas.height,
@@ -500,15 +593,15 @@
         ctx.fill();
         if (p.y < 0) particles.splice(i, 1);
       }
-      if (particles.length < 30) createParticle();
+      if (particles.length < 20) createParticle();
       requestAnimationFrame(animateParticles);
     }
 
-    // Load words from JSON
+    // Load words from GitHub
     async function loadWords() {
       try {
-        const response = await fetch('./words.json');
-        if (!response.ok) throw new Error('Failed to load words.json');
+        const response = await fetch('https://raw.githubusercontent.com/sd-rubel/aaabbbir/refs/heads/main/words.json');
+        if (!response.ok) throw new Error('Failed to load words.json from GitHub');
         DATA = await response.json();
         startApp();
       } catch (error) {
@@ -517,16 +610,17 @@
       }
     }
 
+    // Japanese pronunciation with speechSynthesis
     function speak(text, callback) {
       if ('speechSynthesis' in window && speechSynthesis.getVoices().some(voice => voice.lang.includes('ja'))) {
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'ja-JP';
         u.onend = () => {
-          setTimeout(callback, 500); // 0.5s pause after result sound
+          setTimeout(callback, 500);
         };
         speechSynthesis.speak(u);
       } else {
-        console.warn('Japanese speech synthesis not available. Using fallback.');
+        console.warn('Japanese speech synthesis not available. Skipping pronunciation.');
         setTimeout(callback, 2000);
       }
     }
@@ -547,7 +641,11 @@
       if (DATA.length === 0) return;
       currentIndex = Math.floor(Math.random() * DATA.length);
       const item = DATA[currentIndex];
-      qEl.textContent = item.bn_w;
+      enEl.textContent = item.en_w;
+      bnEl.textContent = item.bn_w;
+      hiEl.textContent = item.hi_w;
+      npEl.textContent = item.np_w;
+      siEl.textContent = item.si_w;
       aEl.textContent = "";
       pEl.textContent = "";
       qEl.classList.add("visible");
@@ -555,13 +653,19 @@
       pEl.classList.remove("visible");
       statusEl.textContent = "প্রশ্ন চলছে...";
       timerContainer.classList.add("visible");
-      timerFill.style.background = 'var(--accent)'; // Solid color
+      timerFill.style.background = 'var(--accent)';
       timerCount.textContent = "5";
 
       let timeLeft = questionDuration;
-      let beepCount = 4; // Beep at 4, 3, 2, 1 seconds
+      let beepCount = 4;
       const startTime = performance.now();
       timerFill.style.width = '100%';
+
+      try {
+        beepSound.play().catch(() => console.warn('Beep sound failed to play'));
+      } catch (e) {
+        console.warn('Error playing beep sound:', e);
+      }
 
       function updateTimer(currentTime) {
         const elapsed = currentTime - startTime;
@@ -574,7 +678,7 @@
         }
         timerFill.style.width = `${(timeLeft / questionDuration) * 100}%`;
         timerCount.textContent = Math.ceil(timeLeft / 1000);
-        if (timeLeft <= beepCount * 1000 && beepCount > 0) { // Beep at 4, 3, 2, 1 seconds
+        if (timeLeft <= beepCount * 1000 && beepCount > 0) {
           try {
             beepSound.play().catch(() => console.warn('Beep sound failed to play'));
           } catch (e) {
@@ -591,8 +695,12 @@
     }
 
     function showAnswer(item) {
-      clearTimeout(timerInterval); // Ensure beep sound stops
-      qEl.textContent = item.bn_w;
+      clearTimeout(timerInterval);
+      enEl.textContent = item.en_w;
+      bnEl.textContent = item.bn_w;
+      hiEl.textContent = item.hi_w;
+      npEl.textContent = item.np_w;
+      siEl.textContent = item.si_w;
       aEl.textContent = item.jp_w;
       pEl.textContent = item.prnction;
       aEl.classList.add("visible");
@@ -605,36 +713,27 @@
       }
 
       speak(item.jp_w, () => {
-        setTimeout(nextCard, 2000); // 2s after speech
+        setTimeout(nextCard, 2000);
       });
-
-      // Fallback in case speechSynthesis hangs
-      setTimeout(() => {
-        if (!timerContainer.classList.contains("visible")) {
-          nextCard();
-        }
-      }, 7000);
     }
 
-    // Preload audio files
     backgroundMusic.load();
     beepSound.load();
     resultSound.load();
 
-    // Start the app after loading words
     function startApp() {
+      enterFullscreenAndLock();
       startHourTimer();
       animateParticles();
+      rotateSubscribeText();
       nextCard();
     }
 
-    // Handle window resize
     window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = window.innerHeight;
+      canvas.height = window.innerWidth;
     });
 
-    // Load words and start app
     window.onload = loadWords;
   </script>
 </body>
