@@ -1,21 +1,38 @@
 [
   {
-    "en_w": "Hello",
-    "bn_w": "হ্যালো",
-    "hi_w": "नमस्ते",
-    "np_w": "नमस्ते",
-    "si_w": "ආයුබෝවන්",
-    "jp_w": "こんにちは",
-    "prnction": "Konnichiwa"
+    "en_w": "I",
+    "bn_w": "আমি",
+    "hi_w": "मैं",
+    "np_w": "म",
+    "si_w": "මම",
+    "jp_w": "わたし",
+    "prnction": "Watashi"
   },
   {
-    "en_w": "Thank you",
-    "bn_w": "ধন্যবাদ",
-    "hi_w": "धन्यवाद",
-    "np_w": "धन्यवाद",
-    "si_w": "ස්තුතියි",
-    "jp_w": "ありがとう",
-    "prnction": "Arigatou"
+    "en_w": "You",
+    "bn_w": "তুমি",
+    "hi_w": "आप",
+    "np_w": "तपाईं",
+    "si_w": "ඔබ",
+    "jp_w": "あなた",
+    "prnction": "Anata"
+  },
+  {
+    "en_w": "Good evening",
+    "bn_w": "শুভ সন্ধ্যা",
+    "hi_w": "शुभ संध्या",
+    "np_w": "शुभ साँझ",
+    "si_w": "සුබ සන්ධ්‍යාව",
+    "jp_w": "こんばんは",
+    "prnction": "Konbanwa"
+  },
+  {
+    "en_w": "Goodbye",
+    "bn_w": "বিদায়",
+    "hi_w": "अलविदा",
+    "np_w": "बिदाइ",
+    "si_w": "සමුගන්න",
+    "jp_w": "じゃあね",
+    "prnction": "Jaa ne"
   }
-  
 ]
