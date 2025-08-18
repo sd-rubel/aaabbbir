@@ -138,19 +138,32 @@
 
     .title {
       font-size: 2.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem;
       text-shadow: 0 0 20px var(--accent), 0 0 30px var(--accent2);
       animation: glow 3s ease-in-out infinite alternate;
     }
 
-    .highlight {
+    .subtitle {
+      font-size: 1.5rem;
+      color: var(--ink);
+      margin-bottom: 1.5rem;
+    }
+
+    .n5 {
+      font-size: 2.8rem;
       color: var(--accent2);
-      text-shadow: 0 0 10px var(--accent2);
+      text-shadow: 0 0 10px var(--accent2), 0 0 20px var(--accent2);
+      animation: n5-glow 2s ease-in-out infinite alternate;
     }
 
     @keyframes glow {
       0% { text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent2); }
       100% { text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent2); }
+    }
+
+    @keyframes n5-glow {
+      0% { text-shadow: 0 0 5px var(--accent2), 0 0 10px var(--accent2); }
+      100% { text-shadow: 0 0 15px var(--accent2), 0 0 25px var(--accent2); }
     }
 
     .card {
@@ -160,11 +173,11 @@
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
       margin: 20px auto;
-      height: 350px; /* Increased height to accommodate languages */
+      height: 350px;
       width: 90%;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
       overflow: hidden;
@@ -174,22 +187,28 @@
       width: 100%;
       text-align: left;
       padding-left: 20px;
+      position: absolute;
+      top: 20px;
       opacity: 0;
-      transform: scale(0.8);
-      transition: opacity var(--transition), transform var(--transition);
-      margin-bottom: 20px;
+      transform: translateX(-20px);
+      transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    }
+
+    .question.visible {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     .question div {
       margin: 8px 0;
-      font-size: 1.2rem; /* Reduced font size */
+      font-size: 1.2rem;
       display: flex;
       align-items: center;
     }
 
     .lang-label {
       display: inline-block;
-      width: 60px; /* Fixed width for alignment */
+      width: 70px; /* Increased for better alignment */
       font-weight: 600;
       color: var(--muted);
     }
@@ -205,31 +224,41 @@
     .np { color: var(--nepali); font-family: 'Hind Siliguri', sans-serif; }
     .si { color: var(--sinhala); font-family: 'Noto Sans Sinhala', sans-serif; }
 
+    .answer-container {
+      position: absolute;
+      bottom: 20px;
+      text-align: center;
+      width: 100%;
+    }
+
     .answer {
-      font-size: 4rem; /* Larger font for Japanese */
+      font-size: 4rem;
       font-weight: 800;
       color: var(--answer);
       text-shadow: 0 0 15px var(--glow);
       opacity: 0;
-      transform: scale(0.8);
-      transition: opacity var(--transition), transform var(--transition);
-      text-align: center;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    }
+
+    .answer.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .pronunciation {
       font-size: 1.3rem;
       font-weight: 400;
       color: var(--muted);
-      margin-top: 10px;
+      padding-top: 10px; /* Added padding */
       opacity: 0;
-      transform: scale(0.8);
-      transition: opacity var(--transition), transform var(--transition);
-      text-align: center;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
     }
 
-    .visible {
+    .pronunciation.visible {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0);
     }
 
     .timer-container {
@@ -353,9 +382,11 @@
 
     @media (max-width: 600px) {
       .title { font-size: 1.8rem; }
+      .subtitle { font-size: 1.2rem; }
+      .n5 { font-size: 2rem; }
       .question { font-size: 1rem; padding-left: 10px; }
       .question div { font-size: 1rem; }
-      .lang-label { width: 50px; }
+      .lang-label { width: 60px; }
       .answer { font-size: 2.5rem; }
       .pronunciation { font-size: 1.1rem; }
       .card { padding: 30px; height: 300px; }
@@ -388,7 +419,8 @@
     <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.01" value="0.05">
   </div>
   <div class="app">
-    <h1 class="title">Minna No Nihongo <span class="highlight">Lesson-1</span> Test Yourself</h1>
+    <h1 class="title">Test Yourself</h1>
+    <div class="subtitle"><span class="n5">(N5)</span> Minna No Nihongo - Lesson 1</div>
     <div class="card">
       <div class="timer-container">
         <div class="timer-bar">
@@ -397,14 +429,16 @@
         <div id="timer-count" class="timer-count"></div>
       </div>
       <div id="q" class="question">
-        <div id="en" class="en"><i class="fas fa-language lang-icon"></i><span class="lang-label">Eng:</span><span class="lang-text"></span></div>
-        <div id="bn" class="bn"><i class="fas fa-language lang-icon"></i><span class="lang-label">Ban:</span><span class="lang-text"></span></div>
-        <div id="hi" class="hi"><i class="fas fa-language lang-icon"></i><span class="lang-label">Hin:</span><span class="lang-text"></span></div>
-        <div id="np" class="np"><i class="fas fa-language lang-icon"></i><span class="lang-label">Nep:</span><span class="lang-text"></span></div>
-        <div id="si" class="si"><i class="fas fa-language lang-icon"></i><span class="lang-label">Sin:</span><span class="lang-text"></span></div>
+        <div id="en" class="en"><i class="fas fa-chevron-right lang-icon"></i><span class="lang-label">Eng:</span><span class="lang-text"></span></div>
+        <div id="bn" class="bn"><i class="fas fa-chevron-right lang-icon"></i><span class="lang-label">Ban:</span><span class="lang-text"></span></div>
+        <div id="hi" class="hi"><i class="fas fa-chevron-right lang-icon"></i><span class="lang-label">Hin:</span><span class="lang-text"></span></div>
+        <div id="np" class="np"><i class="fas fa-chevron-right lang-icon"></i><span class="lang-label">Nep:</span><span class="lang-text"></span></div>
+        <div id="si" class="si"><i class="fas fa-chevron-right lang-icon"></i><span class="lang-label">Sin:</span><span class="lang-text"></span></div>
       </div>
-      <div id="a" class="answer"></div>
-      <div id="p" class="pronunciation"></div>
+      <div class="answer-container">
+        <div id="a" class="answer"></div>
+        <div id="p" class="pronunciation"></div>
+      </div>
     </div>
     <div class="progress">
       <div id="progress-bar" class="progress-bar"></div>
