@@ -77,7 +77,7 @@
 
     .logo-container {
       position: absolute;
-      left: 45px; /* Moved 25px right from 20px */
+      left: 45px;
       top: 20px;
       width: 80px;
       text-align: center;
@@ -160,7 +160,7 @@
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
       margin: 20px auto;
-      height: 300px;
+      height: 350px; /* Increased height to accommodate languages */
       width: 90%;
       display: flex;
       flex-direction: column;
@@ -171,16 +171,32 @@
     }
 
     .question {
-      font-size: 2rem;
-      font-weight: 600;
+      width: 100%;
+      text-align: left;
+      padding-left: 20px;
       opacity: 0;
       transform: scale(0.8);
       transition: opacity var(--transition), transform var(--transition);
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     .question div {
-      margin: 5px 0;
+      margin: 8px 0;
+      font-size: 1.2rem; /* Reduced font size */
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-label {
+      display: inline-block;
+      width: 60px; /* Fixed width for alignment */
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .lang-icon {
+      margin-right: 8px;
+      color: var(--accent2);
     }
 
     .en { color: var(--accent2); font-family: 'Roboto', sans-serif; }
@@ -190,13 +206,14 @@
     .si { color: var(--sinhala); font-family: 'Noto Sans Sinhala', sans-serif; }
 
     .answer {
-      font-size: 3rem;
+      font-size: 4rem; /* Larger font for Japanese */
       font-weight: 800;
       color: var(--answer);
       text-shadow: 0 0 15px var(--glow);
       opacity: 0;
       transform: scale(0.8);
       transition: opacity var(--transition), transform var(--transition);
+      text-align: center;
     }
 
     .pronunciation {
@@ -207,6 +224,7 @@
       opacity: 0;
       transform: scale(0.8);
       transition: opacity var(--transition), transform var(--transition);
+      text-align: center;
     }
 
     .visible {
@@ -335,10 +353,12 @@
 
     @media (max-width: 600px) {
       .title { font-size: 1.8rem; }
-      .question { font-size: 1.5rem; }
-      .answer { font-size: 2.2rem; }
+      .question { font-size: 1rem; padding-left: 10px; }
+      .question div { font-size: 1rem; }
+      .lang-label { width: 50px; }
+      .answer { font-size: 2.5rem; }
       .pronunciation { font-size: 1.1rem; }
-      .card { padding: 30px; height: 250px; }
+      .card { padding: 30px; height: 300px; }
       .timer-bar { width: 80px; height: 6px; }
       .timer-count { font-size: 1.4rem; }
       .logo-container { left: 35px; top: 10px; width: 60px; }
@@ -377,11 +397,11 @@
         <div id="timer-count" class="timer-count"></div>
       </div>
       <div id="q" class="question">
-        <div id="en" class="en"></div>
-        <div id="bn" class="bn"></div>
-        <div id="hi" class="hi"></div>
-        <div id="np" class="np"></div>
-        <div id="si" class="si"></div>
+        <div id="en" class="en"><i class="fas fa-language lang-icon"></i><span class="lang-label">Eng:</span><span class="lang-text"></span></div>
+        <div id="bn" class="bn"><i class="fas fa-language lang-icon"></i><span class="lang-label">Ban:</span><span class="lang-text"></span></div>
+        <div id="hi" class="hi"><i class="fas fa-language lang-icon"></i><span class="lang-label">Hin:</span><span class="lang-text"></span></div>
+        <div id="np" class="np"><i class="fas fa-language lang-icon"></i><span class="lang-label">Nep:</span><span class="lang-text"></span></div>
+        <div id="si" class="si"><i class="fas fa-language lang-icon"></i><span class="lang-label">Sin:</span><span class="lang-text"></span></div>
       </div>
       <div id="a" class="answer"></div>
       <div id="p" class="pronunciation"></div>
@@ -389,7 +409,7 @@
     <div class="progress">
       <div id="progress-bar" class="progress-bar"></div>
     </div>
-    <div id="status-text" class="status">প্রস্তুত...</div>
+    <div id="status-text" class="status">Ready...</div>
     <div class="subscribe">
       <div id="subscribe-text" class="subscribe-text"></div>
       <button>
@@ -431,7 +451,7 @@
     // Handle audio errors
     backgroundMusic.addEventListener('error', (e) => {
       console.error('Error loading background music:', e);
-      document.getElementById('status-text').textContent = 'ব্যাকগ্রাউন্ড মিউজিক লোড করতে ব্যর্থ।';
+      document.getElementById('status-text').textContent = 'Failed to load background music.';
     });
 
     // Play/Pause button functionality
@@ -442,7 +462,7 @@
           console.log('Background music playing');
         }).catch((e) => {
           console.error('Error playing background music:', e);
-          document.getElementById('status-text').textContent = 'মিউজিক প্লে করতে ব্যর্থ।';
+          document.getElementById('status-text').textContent = 'Failed to play music.';
         });
       } else {
         backgroundMusic.pause();
@@ -468,11 +488,11 @@
     const questionDuration = 5000; // 5 seconds
 
     const qEl = document.getElementById('q');
-    const enEl = document.getElementById('en');
-    const bnEl = document.getElementById('bn');
-    const hiEl = document.getElementById('hi');
-    const npEl = document.getElementById('np');
-    const siEl = document.getElementById('si');
+    const enText = document.querySelector('#en .lang-text');
+    const bnText = document.querySelector('#bn .lang-text');
+    const hiText = document.querySelector('#hi .lang-text');
+    const npText = document.querySelector('#np .lang-text');
+    const siText = document.querySelector('#si .lang-text');
     const aEl = document.getElementById('a');
     const pEl = document.getElementById('p');
     const timerContainer = document.querySelector('.timer-container');
@@ -498,7 +518,7 @@
         subscribeText.textContent = subscribeMessages[currentMessageIndex].text;
         subscribeText.classList.add('visible');
         currentMessageIndex = (currentMessageIndex + 1) % subscribeMessages.length;
-        setTimeout(rotateSubscribeText, 4000); // Change every 4 seconds
+        setTimeout(rotateSubscribeText, 10000); // Change every 10 seconds
       }, 500); // Delay for fade-out
     }
 
@@ -552,12 +572,13 @@
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        DATA = await response.json();
+        const text = await response.text();
+        DATA = JSON.parse(text);
         console.log('Words loaded successfully:', DATA);
         startApp();
       } catch (error) {
         console.error('Error loading words:', error.message);
-        statusEl.textContent = `শব্দ লোড করতে ব্যর্থ: ${error.message}। পুনরায় চেষ্টা করুন।`;
+        statusEl.textContent = `Failed to load words: ${error.message}. Check JSON format or internet connection.`;
       }
     }
 
@@ -589,22 +610,22 @@
 
     function nextCard() {
       if (DATA.length === 0) {
-        statusEl.textContent = "কোনো শব্দ উপলব্ধ নেই।";
+        statusEl.textContent = "No words available.";
         return;
       }
       currentIndex = Math.floor(Math.random() * DATA.length);
       const item = DATA[currentIndex];
-      enEl.textContent = item.en_w;
-      bnEl.textContent = item.bn_w;
-      hiEl.textContent = item.hi_w;
-      npEl.textContent = item.np_w;
-      siEl.textContent = item.si_w;
+      enText.textContent = item.en_w;
+      bnText.textContent = item.bn_w;
+      hiText.textContent = item.hi_w;
+      npText.textContent = item.np_w;
+      siText.textContent = item.si_w;
       aEl.textContent = "";
       pEl.textContent = "";
       qEl.classList.add("visible");
       aEl.classList.remove("visible");
       pEl.classList.remove("visible");
-      statusEl.textContent = "প্রশ্ন চলছে...";
+      statusEl.textContent = "Thinking...";
       timerContainer.classList.add("visible");
       timerFill.style.background = 'var(--accent)';
       timerCount.textContent = "5";
@@ -643,16 +664,16 @@
 
     function showAnswer(item) {
       clearTimeout(timerInterval);
-      enEl.textContent = item.en_w;
-      bnEl.textContent = item.bn_w;
-      hiEl.textContent = item.hi_w;
-      npEl.textContent = item.np_w;
-      siEl.textContent = item.si_w;
+      enText.textContent = item.en_w;
+      bnText.textContent = item.bn_w;
+      hiText.textContent = item.hi_w;
+      npText.textContent = item.np_w;
+      siText.textContent = item.si_w;
       aEl.textContent = item.jp_w;
       pEl.textContent = item.prnction;
       aEl.classList.add("visible");
       pEl.classList.add("visible");
-      statusEl.textContent = "✔ উত্তর";
+      statusEl.textContent = "✔ Answer";
       try {
         resultSound.play().catch((e) => console.warn('Result sound failed to play:', e));
       } catch (e) {
