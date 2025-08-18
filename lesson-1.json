@@ -1,0 +1,21 @@
+[
+  {
+    "en_w": "Hello",
+    "bn_w": "হ্যালো",
+    "hi_w": "नमस्ते",
+    "np_w": "नमस्ते",
+    "si_w": "ආයුබෝවන්",
+    "jp_w": "こんにちは",
+    "prnction": "Konnichiwa"
+  },
+  {
+    "en_w": "Thank you",
+    "bn_w": "ধন্যবাদ",
+    "hi_w": "धन्यवाद",
+    "np_w": "धन्यवाद",
+    "si_w": "ස්තුතියි",
+    "jp_w": "ありがとう",
+    "prnction": "Arigatou"
+  }
+  // Add more words as needed
+]
