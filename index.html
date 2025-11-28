@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Pexels Slideshow - Video Recorder</title>
+    <title>Dynamic Pexels Slideshow - Smooth HD Video Recorder</title>
     <!-- Load Tailwind CSS for modern, responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -69,7 +69,7 @@
 
     <div class="w-full max-w-4xl text-center mb-6">
         <h1 class="text-3xl font-extrabold text-gray-800 mb-2">Pexels Slideshow</h1>
-        <p class="text-gray-600">Pan/Zoom effect with cross-fade transition.</p>
+        <p class="text-gray-600">Smooth Pan/Zoom effect with cross-fade transition.</p>
     </div>
 
     <!-- Tabs Container -->
@@ -162,15 +162,23 @@
     <!-- Controls Container (Fullscreen, Record) -->
     <div class="flex flex-col items-center w-full max-w-lg mb-8 space-y-4">
         
-        <!-- Recording Duration Input -->
-        <div class="w-full flex justify-center items-center space-x-2 bg-white p-3 rounded-lg shadow">
-            <label for="record-duration-min" class="text-sm font-medium text-gray-700 whitespace-nowrap">
+        <!-- Recording Duration Input (Time Picker) -->
+        <div class="w-full flex justify-center items-center space-x-4 bg-white p-3 rounded-lg shadow">
+            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
                 Record For:
             </label>
-            <input type="number" id="record-duration-min" min="1" max="10" value="5" required 
-                   oninput="updateRecordDurationDisplay()"
-                   class="w-16 p-2 border border-gray-300 rounded-md text-center focus:ring-red-500 focus:border-red-500">
-            <span class="text-sm font-medium text-gray-700">minutes</span>
+            <div class="flex items-center space-x-2">
+                <input type="number" id="record-duration-min" min="0" max="10" value="0" required 
+                       oninput="updateRecordDurationDisplay()"
+                       class="w-16 p-2 border border-gray-300 rounded-md text-center focus:ring-red-500 focus:border-red-500">
+                <span class="text-sm text-gray-700">min</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <input type="number" id="record-duration-sec" min="1" max="59" value="30" required 
+                       oninput="updateRecordDurationDisplay()"
+                       class="w-16 p-2 border border-gray-300 rounded-md text-center focus:ring-red-500 focus:border-red-500">
+                <span class="text-sm text-gray-700">sec</span>
+            </div>
         </div>
 
         <div class="flex justify-center space-x-4">
@@ -187,7 +195,7 @@
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
                 </svg>
-                <span id="record-text" class="font-semibold text-sm">Record (5 min)</span>
+                <span id="record-text" class="font-semibold text-sm">Record (0m 30s)</span>
             </button>
         </div>
     </div>
@@ -209,7 +217,7 @@
 
         // --- DOM Elements ---
         const form = document.getElementById('fetch-form');
-        const apiKeyInput = document.getElementById('api-key-input'); // New DOM element
+        const apiKeyInput = document.getElementById('api-key-input'); 
         const categorySelect = document.getElementById('category');
         const perPageInput = document.getElementById('per_page');
         const panDurationInput = document.getElementById('pan-duration');
@@ -222,14 +230,15 @@
         const recordBtn = document.getElementById('record-btn');
         const recordText = document.getElementById('record-text');
         const recordDurationMinInput = document.getElementById('record-duration-min');
+        const recordDurationSecInput = document.getElementById('record-duration-sec'); // New
 
         // --- Slideshow/Animation State ---
         let photoUrls = [];
         let currentIndex = 0;
         let slideshowInterval = null;
         let animationFrameId = null;
-        let currentImage = null; // Image object being displayed
-        let nextImage = null;    // Image object that is fading in
+        let currentImage = null; 
+        let nextImage = null;    
         let panStartTime = 0;
         let activeTab = 'fetch';
         let originalCanvasSize = { width: 0, height: 0 };
@@ -238,7 +247,31 @@
         let mediaRecorder = null;
         let recordedChunks = [];
         const VIDEO_RESOLUTION = { width: 1920, height: 1080 };
+        let recordingStartTime = null; // Used for canvas timestamp
         
+        // --- Utility Functions ---
+
+        /**
+         * Easing function for smoother pan (Cubic Ease In/Out)
+         * @param {number} t - time progress (0 to 1)
+         * @returns {number} Eased progress value (0 to 1)
+         */
+        function easeInOutCubic(t) {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        }
+
+        /**
+         * Formats milliseconds into MM:SS format.
+         * @param {number} ms - time in milliseconds
+         * @returns {string} Formatted time string
+         */
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        }
+
         // --- API Key Management ---
         
         function getApiKey() {
@@ -247,7 +280,6 @@
 
         function saveApiKey() {
             try {
-                // Save the key whenever the input changes
                 localStorage.setItem(API_KEY_STORAGE_KEY, apiKeyInput.value.trim());
             } catch (error) {
                 console.error("Failed to save API key to local storage:", error);
@@ -269,30 +301,36 @@
             }
         }
 
-
-        // --- Helper to update duration display ---
+        // --- Control Updates ---
+        
         function updateDurationDisplay(value) {
             PAN_DURATION_MS = parseInt(value, 10);
             durationDisplay.textContent = (PAN_DURATION_MS / 1000).toFixed(1);
             if (slideshowInterval) {
-                 // Restart the slideshow with the new interval duration
                  startSlideshow(categorySelect.value);
             }
         }
         
         function updateRecordDurationDisplay() {
-            const duration = parseInt(recordDurationMinInput.value) || 5;
-            recordText.textContent = `Record (${duration} min)`;
+            const minutes = parseInt(recordDurationMinInput.value) || 0;
+            const seconds = parseInt(recordDurationSecInput.value) || 0;
+            
+            // Ensure at least one second is set for recording
+            if (minutes === 0 && seconds === 0) {
+                 recordDurationSecInput.value = 1;
+                 updateRecordDurationDisplay();
+                 return;
+            }
+
+            const totalSeconds = (minutes * 60) + seconds;
+            
+            recordText.textContent = `Record (${minutes}m ${String(seconds).padStart(2, '0')}s)`;
         }
 
         // --- Fullscreen and Canvas Setup ---
 
-        /**
-         * Toggles the canvas container into or out of fullscreen mode.
-         */
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
-                // Enter fullscreen mode
                 canvasContainer.requestFullscreen().catch(err => {
                     if (err.name === 'SecurityError' || (err.message && err.message.includes('permissions policy'))) {
                         displayStatus("Fullscreen failed: The hosting environment blocks this feature. Try running the application in a separate browser tab.", 'error');
@@ -301,16 +339,11 @@
                     }
                 });
             } else {
-                // Exit fullscreen mode
                 document.exitFullscreen();
             }
         }
         
-        /**
-         * Handles resizing when the screen size or fullscreen state changes.
-         */
         function resizeCanvas() {
-            // Save current responsive size
             originalCanvasSize.width = canvasContainer.clientWidth;
             originalCanvasSize.height = canvasContainer.clientHeight;
             
@@ -321,7 +354,6 @@
             }
 
             if (currentImage) {
-                // Re-calculate pan points and restart animation to adapt to new size
                 startImageAnimation(currentImage, photoUrls[currentIndex], nextImage); 
             }
         }
@@ -329,23 +361,29 @@
         // --- Animation and Transition Logic ---
 
         function calculatePanPoints(img) {
-            const panFactor = 1.15;
+            const panFactor = 1.15; // 15% zoom
             const canvasWidth = canvas.width;
             const canvasHeight = canvas.height;
             const drawW = canvasWidth * panFactor;
             const drawH = canvasHeight * panFactor;
+            
+            // Determine scale to fit source image onto the zoomed drawing size
             const sourceScale = Math.min(img.width / drawW, img.height / drawH);
             const sourceW = drawW * sourceScale;
             const sourceH = drawH * sourceScale;
+            
             const maxX = img.width - sourceW;
             const maxY = img.height - sourceH;
             
+            // Random start point
             const startX = Math.random() * maxX;
             const startY = Math.random() * maxY;
+            
+            // Random end point (ensuring it's distinct from start)
             let endX = Math.random() * maxX;
             let endY = Math.random() * maxY;
 
-            // Ensure a decent amount of movement
+            // Simple check to ensure motion is visible
             if (Math.abs(startX - endX) < maxX * 0.1) endX = maxX - startX; 
             if (Math.abs(startY - endY) < maxY * 0.1) endY = maxY - startY; 
             
@@ -382,12 +420,13 @@
             if (!panStartTime) panStartTime = timestamp;
             const elapsed = timestamp - panStartTime;
             
-            // Total duration for the pan effect
+            // Total duration for the slideshow step
             const totalDuration = PAN_DURATION_MS;
 
             // Pan progress for the current image (0 to 1)
             const panProgress = Math.min(elapsed / (totalDuration - TRANSITION_DURATION_MS), 1);
-            
+            const easedPanProgress = easeInOutCubic(panProgress); // Apply smoothing
+
             // Transition progress for the next image (0 to 1)
             const transitionProgress = Math.min(Math.max(0, elapsed - (totalDuration - TRANSITION_DURATION_MS)) / TRANSITION_DURATION_MS, 1);
 
@@ -396,8 +435,8 @@
             // 1. Draw Previous/Current Image (Panning)
             if (currentImage.pan) {
                 const { destX, destY, destW, destH, sX, sY, sW, sH, eX, eY } = currentImage.pan;
-                const currentSrcX = sX + (eX - sX) * panProgress;
-                const currentSrcY = sY + (eY - sY) * panProgress;
+                const currentSrcX = sX + (eX - sX) * easedPanProgress; 
+                const currentSrcY = sY + (eY - sY) * easedPanProgress; 
                 
                 // Fade out current image
                 ctx.globalAlpha = 1 - transitionProgress; 
@@ -408,42 +447,53 @@
             // 2. Draw Next Image (Fading In and Panning)
             if (nextImage && nextImage.pan) {
                 const { destX, destY, destW, destH, sX, sY, sW, sH, eX, eY } = nextImage.pan;
-                const currentSrcX = sX + (eX - sX) * panProgress;
-                const currentSrcY = sY + (eY - sY) * panProgress;
+                const currentSrcX = sX + (eX - sX) * easedPanProgress;
+                const currentSrcY = sY + (eY - sY) * easedPanProgress;
 
                 // Fade in next image
                 ctx.globalAlpha = transitionProgress;
                 ctx.drawImage(nextImage, currentSrcX, currentSrcY, sW, sH, destX, destY, destW, destH);
                 ctx.globalAlpha = 1; // Reset
             }
+            
+            // 3. Draw Recording Timestamp (Only when recording)
+            if (mediaRecorder && mediaRecorder.state === 'recording' && recordingStartTime) {
+                const elapsedRecordingTime = timestamp - recordingStartTime;
+                const timeText = formatTime(elapsedRecordingTime);
 
+                ctx.globalAlpha = 1;
+                // Use a large font size for HD resolution (1920x1080)
+                ctx.font = 'bold 72px Inter, sans-serif'; 
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // Semi-transparent white
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)'; // Subtle black stroke for visibility
+                ctx.lineWidth = 6;
+                ctx.textAlign = 'right';
+                
+                const padding = 50;
+                const textX = canvas.width - padding;
+                const textY = canvas.height - padding;
+                
+                ctx.strokeText(timeText, textX, textY);
+                ctx.fillText(timeText, textX, textY);
+            }
 
             if (elapsed < totalDuration) {
                 animationFrameId = requestAnimationFrame(animatePan);
             } else {
-                // Transition finished, set next image as current and stop old pan
                 currentImage = nextImage;
                 nextImage = null;
                 panStartTime = 0; 
-                
-                // The slideshow interval will trigger the next image load
             }
         }
 
         function loadImage(url, callback) {
             const img = new Image();
-            // Critical for canvas.captureStream to avoid CORS issues
             img.crossOrigin = 'Anonymous'; 
-
-            img.onload = () => {
-                callback(img);
-            };
-
+            img.onload = () => { callback(img); };
             img.onerror = () => {
                 console.error(`Failed to load image: ${url}`);
                 callback(null);
             };
-
             img.src = url;
         }
         
@@ -464,7 +514,6 @@
 
                 // 2. Load next image
                 loadImage(nextUrl, (img2) => {
-                    // Start the pan animation with the current image and the next image for cross-fade
                     startImageAnimation(img1, currentUrl, img2, nextUrl);
                     currentIndex = nextIndex;
                 });
@@ -495,12 +544,9 @@
                 return;
             }
             
-            currentIndex = photoUrls.length - 1; // Set back 1 so loadNextImage loads index 0 first
-            
-            // Load first two images to kick off the loop
+            currentIndex = photoUrls.length - 1; 
             loadNextImage();
 
-            // Set the interval to trigger the next image load right after the pan duration finishes
             slideshowInterval = setInterval(() => {
                 loadNextImage();
             }, PAN_DURATION_MS); 
@@ -520,13 +566,15 @@
                  displayStatus("Please fetch images and start the slideshow before recording.", 'error');
                  return;
             }
+
+            const minutes = parseInt(recordDurationMinInput.value) || 0;
+            const seconds = parseInt(recordDurationSecInput.value) || 0;
+            const recordDurationMS = (minutes * 60 * 1000) + (seconds * 1000);
             
-            const recordDurationMinutes = parseInt(recordDurationMinInput.value) || 5;
-            if (recordDurationMinutes < 1 || recordDurationMinutes > 10) {
-                displayStatus("Please set a recording duration between 1 and 10 minutes.", 'error');
+            if (recordDurationMS <= 0 || recordDurationMS > 600000) { // Max 10 minutes
+                displayStatus("Please set a valid recording duration between 1 second and 10 minutes.", 'error');
                 return;
             }
-            const recordDurationMS = recordDurationMinutes * 60 * 1000;
 
             // 1. Set canvas to target resolution (1920x1080) for high quality video output
             canvas.width = VIDEO_RESOLUTION.width;
@@ -538,14 +586,13 @@
             
             recordedChunks = [];
             
-            // Use WebM format with H.264 codec for compatibility
             const options = { mimeType: 'video/webm; codecs=vp8' };
 
             try {
                 mediaRecorder = new MediaRecorder(stream, options);
             } catch (e) {
                 displayStatus(`Recording failed: MediaRecorder setup error: ${e.message}`, 'error');
-                canvas.width = originalCanvasSize.width; // Restore original size
+                canvas.width = originalCanvasSize.width; 
                 canvas.height = originalCanvasSize.height;
                 resizeCanvas();
                 return;
@@ -560,6 +607,7 @@
             mediaRecorder.onstop = downloadVideo;
 
             mediaRecorder.start();
+            recordingStartTime = Date.now(); // Start timestamp tracking
 
             // Update UI for recording state
             recordBtn.onclick = stopRecording;
@@ -567,7 +615,7 @@
             recordBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
             recordText.textContent = 'STOP RECORDING';
 
-            displayStatus(`Recording started at 1920x1080 for ${recordDurationMinutes} minutes...`, 'info');
+            displayStatus(`Recording started at 1920x1080 for ${minutes}m ${seconds}s...`, 'info');
             
             // Automatically stop after user-defined duration
             setTimeout(() => {
@@ -580,12 +628,13 @@
         function stopRecording() {
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 mediaRecorder.stop();
+                recordingStartTime = null;
                 
                 // Restore UI for non-recording state
                 recordBtn.onclick = startRecording;
                 recordBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
                 recordBtn.classList.add('bg-red-600', 'hover:bg-red-700');
-                updateRecordDurationDisplay(); // Restore text
+                updateRecordDurationDisplay(); 
 
                 // Restore canvas resolution to responsive size
                 canvas.width = originalCanvasSize.width;
@@ -604,7 +653,6 @@
             const blob = new Blob(recordedChunks, { type: 'video/webm' });
             const url = URL.createObjectURL(blob);
             
-            // Create a temporary download link
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
@@ -613,11 +661,10 @@
             document.body.appendChild(a);
             a.click();
             
-            // Cleanup
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
 
-            displayStatus(`Video downloaded! Resolution: 1920x1080. Check your downloads folder.`, 'success');
+            displayStatus(`HD Video downloaded! Resolution: 1920x1080. Check your downloads folder.`, 'success');
             mediaRecorder = null;
         }
 
@@ -728,7 +775,8 @@
                 const cache = JSON.parse(cachedData);
                 if (now - cache.timestamp < CACHE_DURATION_MS) {
                     displayStatus(`Loading slideshow from cache: ${historyItem.label}.`, 'success');
-                    photoUrls = cache.photos.map(p => p.src.large);
+                    // CRITICAL FIX: Ensure we map to the highest quality image: .original
+                    photoUrls = cache.photos.map(p => p.src.original); 
                     startSlideshow(historyItem.query);
                     switchTab('fetch');
                 } else {
@@ -762,7 +810,8 @@
                     const cache = JSON.parse(cachedData);
                     if (now - cache.timestamp < CACHE_DURATION_MS) {
                         displayStatus(`Serving data from local cache for '${query}'.`, 'success');
-                        photoUrls = cache.photos.map(p => p.src.large);
+                        // CRITICAL FIX: Ensure we map to the highest quality image: .original
+                        photoUrls = cache.photos.map(p => p.src.original); 
                         startSlideshow(query);
                         saveToHistory(query, perPage); 
                         return;
@@ -801,7 +850,8 @@
                     const cachePayload = { timestamp: Date.now(), photos: data.photos };
                     localStorage.setItem(currentCacheKey, JSON.stringify(cachePayload));
                     
-                    photoUrls = data.photos.map(p => p.src.large);
+                    // CRITICAL FIX: Use the highest quality image source
+                    photoUrls = data.photos.map(p => p.src.original); 
                     saveToHistory(query, perPage); 
                     startSlideshow(query);
                 } else {
@@ -834,7 +884,6 @@
         window.addEventListener('resize', resizeCanvas);
 
         window.onload = () => {
-            // Load key first
             loadApiKey();
 
             // Set initial control state
@@ -851,13 +900,10 @@
             const defaultCategory = categorySelect.value;
             const defaultPerPage = parseInt(perPageInput.value);
             
-            // Only try to fetch if a key is present (even if from local storage)
             if (getApiKey()) {
                 fetchPexelsImage(defaultCategory, defaultPerPage, true);
             }
         };
-        // End of code
-
     </script>
 </body>
 </html>
