@@ -86,6 +86,18 @@
         <!-- Tab Content: Fetch New Data -->
         <div id="tab-fetch" class="p-6">
             <form id="fetch-form" class="flex flex-col space-y-4">
+                
+                <!-- API Key Input Field -->
+                <div>
+                    <label for="api-key-input" class="block text-sm font-medium text-gray-700 mb-1">
+                        Pexels API Key
+                    </label>
+                    <input type="password" id="api-key-input" placeholder="Paste your Pexels Key here" 
+                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                           oninput="saveApiKey()">
+                    <p class="text-xs text-gray-500 mt-1">Key is saved locally in your browser and is not stored externally.</p>
+                </div>
+
                 <!-- Duration Slider -->
                 <div>
                     <label for="pan-duration" class="block text-sm font-medium text-gray-700 mb-1">
@@ -186,8 +198,7 @@
 
     <script>
         // --- Configuration Constants ---
-        // 🛑 CRITICAL FIX: You MUST replace 'YOUR_PEXELS_API_KEY' with a valid key from Pexels (or the fetch will fail).
-        const API_KEY = "YOUR_PEXELS_API_KEY"; 
+        const API_KEY_STORAGE_KEY = "pexels_api_key";
         const API_BASE_URL = "https://api.pexels.com/v1/search";
         const CACHE_KEY_PREFIX = "pexels_photo_cache_";
         const HISTORY_KEY = "pexels_slideshow_history";
@@ -198,6 +209,7 @@
 
         // --- DOM Elements ---
         const form = document.getElementById('fetch-form');
+        const apiKeyInput = document.getElementById('api-key-input'); // New DOM element
         const categorySelect = document.getElementById('category');
         const perPageInput = document.getElementById('per_page');
         const panDurationInput = document.getElementById('pan-duration');
@@ -227,6 +239,37 @@
         let recordedChunks = [];
         const VIDEO_RESOLUTION = { width: 1920, height: 1080 };
         
+        // --- API Key Management ---
+        
+        function getApiKey() {
+            return apiKeyInput.value.trim();
+        }
+
+        function saveApiKey() {
+            try {
+                // Save the key whenever the input changes
+                localStorage.setItem(API_KEY_STORAGE_KEY, apiKeyInput.value.trim());
+            } catch (error) {
+                console.error("Failed to save API key to local storage:", error);
+            }
+        }
+
+        function loadApiKey() {
+            try {
+                const storedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+                if (storedKey) {
+                    apiKeyInput.value = storedKey;
+                    displayStatus("API Key loaded from local storage. Ready to fetch.", 'info');
+                } else {
+                    displayStatus("Please enter your Pexels API Key above to start fetching images.", 'error');
+                }
+            } catch (error) {
+                console.error("Failed to load API key from local storage:", error);
+                displayStatus("Error accessing local storage for API Key. Please enter it manually.", 'error');
+            }
+        }
+
+
         // --- Helper to update duration display ---
         function updateDurationDisplay(value) {
             PAN_DURATION_MS = parseInt(value, 10);
@@ -241,9 +284,6 @@
             const duration = parseInt(recordDurationMinInput.value) || 5;
             recordText.textContent = `Record (${duration} min)`;
         }
-
-        updateDurationDisplay(panDurationInput.value); // Set initial pan duration
-        updateRecordDurationDisplay(); // Set initial record duration
 
         // --- Fullscreen and Canvas Setup ---
 
@@ -702,9 +742,16 @@
         }
         
         async function fetchPexelsImage(query, perPage, checkOnly = false) {
-             const currentCacheKey = CACHE_KEY_PREFIX + query + '_' + perPage;
+            const apiKey = getApiKey();
+            const currentCacheKey = CACHE_KEY_PREFIX + query + '_' + perPage;
             const PEXELS_SEARCH_URL = `${API_BASE_URL}?query=${encodeURIComponent(query)}&per_page=${perPage}&orientation=landscape`;
             
+            if (!apiKey) {
+                displayStatus("CRITICAL: Please enter your Pexels API Key above to fetch images.", 'error');
+                stopSlideshow();
+                return;
+            }
+
             displayStatus(`Checking cache for '${query}' (${perPage} images)...`);
             
             const cachedData = localStorage.getItem(currentCacheKey);
@@ -730,28 +777,20 @@
             }
             
             if (checkOnly) {
-                if (API_KEY === "YOUR_PEXELS_API_KEY") {
-                    displayStatus("CRITICAL: Please enter your Pexels API Key in the script source code to load images.", 'error');
-                } else {
-                    displayStatus("No valid cache found. Ready for a new search.", 'info');
-                }
+                displayStatus("No valid cache found. Ready for a new search.", 'info');
                 return;
             }
 
             displayStatus(`Fetching ${perPage} '${query}' images from Pexels API...`);
             try {
-                if (API_KEY === "YOUR_PEXELS_API_KEY") { 
-                    throw new Error("Pexels API Key is missing. Please replace 'YOUR_PEXELS_API_KEY' in the script."); 
-                }
-
                 const response = await fetch(PEXELS_SEARCH_URL, {
                     method: 'GET',
-                    headers: { 'Authorization': API_KEY, 'Content-Type': 'application/json' }
+                    headers: { 'Authorization': apiKey, 'Content-Type': 'application/json' }
                 });
 
                 if (!response.ok) {
                     if (response.status === 403 || response.status === 401) {
-                         throw new Error(`Authentication Error (Status ${response.status}). Please ensure your Pexels API Key is valid and correctly placed in the script.`);
+                         throw new Error(`Authentication Error (Status ${response.status}). Please ensure the API Key is correct.`);
                     }
                     throw new Error(`Failed to fetch data: HTTP status ${response.status} (${response.statusText})`);
                 }
@@ -795,6 +834,13 @@
         window.addEventListener('resize', resizeCanvas);
 
         window.onload = () => {
+            // Load key first
+            loadApiKey();
+
+            // Set initial control state
+            updateDurationDisplay(panDurationInput.value); 
+            updateRecordDurationDisplay(); 
+
             // Initial canvas setup
             resizeCanvas(); 
             
@@ -805,7 +851,10 @@
             const defaultCategory = categorySelect.value;
             const defaultPerPage = parseInt(perPageInput.value);
             
-            fetchPexelsImage(defaultCategory, defaultPerPage, true);
+            // Only try to fetch if a key is present (even if from local storage)
+            if (getApiKey()) {
+                fetchPexelsImage(defaultCategory, defaultPerPage, true);
+            }
         };
         // End of code
 
