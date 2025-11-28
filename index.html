@@ -186,7 +186,8 @@
 
     <script>
         // --- Configuration Constants ---
-        const API_KEY = "B8Cmh6x8Km7BzVDsyCS3sHbHiCWvrD42E5D7PeErJqFROcrp05fummN3"; 
+        // 🛑 CRITICAL FIX: You MUST replace 'YOUR_PEXELS_API_KEY' with a valid key from Pexels (or the fetch will fail).
+        const API_KEY = "YOUR_PEXELS_API_KEY"; 
         const API_BASE_URL = "https://api.pexels.com/v1/search";
         const CACHE_KEY_PREFIX = "pexels_photo_cache_";
         const HISTORY_KEY = "pexels_slideshow_history";
@@ -318,6 +319,23 @@
             };
         }
 
+        function startImageAnimation(img1, url1, img2, url2) {
+            stopAnimation();
+
+            img1.pan = calculatePanPoints(img1);
+            currentImage = img1;
+            
+            if (img2) {
+                img2.pan = calculatePanPoints(img2);
+                nextImage = img2;
+            } else {
+                nextImage = null;
+            }
+
+            panStartTime = 0; 
+            animationFrameId = requestAnimationFrame(animatePan);
+        }
+
         function animatePan(timestamp) {
             if (!currentImage) return;
 
@@ -374,7 +392,8 @@
 
         function loadImage(url, callback) {
             const img = new Image();
-            img.crossOrigin = 'Anonymous';
+            // Critical for canvas.captureStream to avoid CORS issues
+            img.crossOrigin = 'Anonymous'; 
 
             img.onload = () => {
                 callback(img);
@@ -417,7 +436,6 @@
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
             }
-            // Retain currentImage/nextImage state for recording purposes if needed
             panStartTime = 0;
         }
 
@@ -433,7 +451,7 @@
             stopSlideshow();
 
             if (photoUrls.length === 0) {
-                displayStatus(`No images found for category: ${category}.`, 'error');
+                displayStatus(`No images found for category: ${category}. Check your API Key.`, 'error');
                 return;
             }
             
@@ -563,7 +581,7 @@
             mediaRecorder = null;
         }
 
-        // --- History and Fetch Logic (Same as previous implementation) ---
+        // --- History and Fetch Logic ---
 
         function switchTab(tabId) {
             document.getElementById('tab-fetch').classList.add('hidden');
@@ -712,13 +730,19 @@
             }
             
             if (checkOnly) {
-                displayStatus("No valid cache found. Ready for a new search.", 'info');
+                if (API_KEY === "YOUR_PEXELS_API_KEY") {
+                    displayStatus("CRITICAL: Please enter your Pexels API Key in the script source code to load images.", 'error');
+                } else {
+                    displayStatus("No valid cache found. Ready for a new search.", 'info');
+                }
                 return;
             }
 
             displayStatus(`Fetching ${perPage} '${query}' images from Pexels API...`);
             try {
-                if (!API_KEY) { throw new Error("Pexels API Key is missing."); }
+                if (API_KEY === "YOUR_PEXELS_API_KEY") { 
+                    throw new Error("Pexels API Key is missing. Please replace 'YOUR_PEXELS_API_KEY' in the script."); 
+                }
 
                 const response = await fetch(PEXELS_SEARCH_URL, {
                     method: 'GET',
@@ -726,6 +750,9 @@
                 });
 
                 if (!response.ok) {
+                    if (response.status === 403 || response.status === 401) {
+                         throw new Error(`Authentication Error (Status ${response.status}). Please ensure your Pexels API Key is valid and correctly placed in the script.`);
+                    }
                     throw new Error(`Failed to fetch data: HTTP status ${response.status} (${response.statusText})`);
                 }
 
@@ -744,7 +771,7 @@
 
             } catch (error) {
                 console.error("Fetch Error:", error);
-                displayStatus(`Error: ${error.message}. Check your API key or try a different category/number of images.`, 'error');
+                displayStatus(`Error: ${error.message}`, 'error');
                 stopSlideshow();
             }
         }
@@ -785,4 +812,3 @@
     </script>
 </body>
 </html>
-     
