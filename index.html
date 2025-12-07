@@ -3,91 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Pexels Slideshow - Smooth HD Video Recorder</title>
-    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <title>Pexels Image Fetcher - Unique Grid View with Download</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for the canvas container to maintain 16:9 aspect ratio */
-        #canvas-container {
-            width: 100%;
-            max-width: 900px; 
-            margin: 0 auto;
-            /* The padding-top trick maintains the aspect ratio: (9 / 16) * 100 = 56.25% */
-            padding-top: 56.25%; 
-            position: relative;
-            background-color: #1f2937; /* Dark background */
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            transition: max-width 0.3s, padding-top 0.3s;
-        }
-
-        /* Fullscreen styles for the container */
-        #canvas-container:fullscreen {
-            max-width: none;
-            width: 100%;
-            height: 100vh;
-            padding-top: 0;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        /* Canvas inside container */
-        #photo-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        /* Fullscreen styles for the canvas element itself */
-        #photo-canvas:fullscreen {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Style for the active tab */
+        /* Custom styles for the active tab */
         .tab-button.active {
             border-bottom: 3px solid #3b82f6;
             color: #1f2937;
             font-weight: 600;
         }
         
-        /* Style for history items */
-        .history-item {
-            cursor: pointer;
-            transition: background-color 0.2s;
+        /* Image grid styling */
+        #image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
         }
-        .history-item:hover {
-            background-color: #f3f4f6;
+        
+        .grid-image-wrapper {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .grid-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Download Button Styling */
+        .download-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: rgba(59, 130, 246, 0.8); /* Blue with transparency */
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s, background-color 0.2s;
+            z-index: 10;
+        }
+
+        .grid-image-wrapper:hover .download-button {
+            opacity: 1;
+        }
+
+        .download-button:hover {
+            background-color: #2563eb;
         }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 flex flex-col items-center font-sans">
 
     <div class="w-full max-w-4xl text-center mb-6">
-        <h1 class="text-3xl font-extrabold text-gray-800 mb-2">Pexels Slideshow</h1>
-        <p class="text-gray-600">Smooth Pan/Zoom effect with cross-fade transition.</p>
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-2">Pexels Spiritual Image Grid</h1>
+        <p class="text-gray-600">Always showing new, unique images. All images link to 1920x1080 resolution for download.</p>
     </div>
 
-    <!-- Tabs Container -->
     <div class="w-full max-w-md bg-white rounded-t-xl shadow-lg">
         <div class="flex border-b border-gray-200">
-            <button id="tab-fetch-btn" onclick="switchTab('fetch')" class="tab-button active flex-1 py-3 text-gray-500 hover:text-gray-800 transition duration-150">
+            <button id="tab-fetch-btn" class="tab-button active flex-1 py-3 text-gray-800">
                 Fetch New Data
-            </button>
-            <button id="tab-history-btn" onclick="switchTab('history')" class="tab-button flex-1 py-3 text-gray-500 hover:text-gray-800 transition duration-150">
-                Load from History
             </button>
         </div>
 
-        <!-- Tab Content: Fetch New Data -->
         <div id="tab-fetch" class="p-6">
             <form id="fetch-form" class="flex flex-col space-y-4">
                 
-                <!-- API Key Input Field -->
                 <div>
                     <label for="api-key-input" class="block text-sm font-medium text-gray-700 mb-1">
                         Pexels API Key
@@ -97,182 +93,156 @@
                            oninput="saveApiKey()">
                     <p class="text-xs text-gray-500 mt-1">Key is saved locally in your browser and is not stored externally.</p>
                 </div>
-
-                <!-- Duration Slider -->
-                <div>
-                    <label for="pan-duration" class="block text-sm font-medium text-gray-700 mb-1">
-                        Pan/Transition Duration: <span id="duration-display">4.0</span> seconds
-                    </label>
-                    <input type="range" id="pan-duration" min="2000" max="10000" step="500" value="4000" 
-                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg" 
-                           oninput="updateDurationDisplay(this.value)">
-                </div>
-
+                
                 <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-                    <!-- Category Dropdown -->
+                    
                     <div class="flex-1">
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Image Category</label>
                         <select id="category" name="category" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                            <option value="nature">Nature</option>
-                            <option value="islamic">Muslim and Islamic Related</option>
-                            <option value="flower">Flowers</option>
-                            <option value="city">City / Architecture</option>
-                            <option value="technology">Technology</option>
-                            <option value="travel">Travel</option>
-                            <option value="food">Food</option>
-                            <option value="abstract">Abstract</option>
+                            <option value="Islamic spiritual atmosphere, deep sense of peace and submission, awareness of Allah’s presence, Allah’s creation, vast natural scenery, flowing rivers symbolizing life, green fields and hills, high mountains showing Allah’s greatness, forests filled with light and shadow, ocean waves reflecting divine power, calm lakes and reflections, sunrise bringing hope, sunset reminding of ending, clouds moving across the sky, rain as mercy from Allah, rainbow as a sign of hope, star-filled sky inspiring reflection, moonlight night creating tranquility, real mosque exterior in harmony with nature, mosque interior filled with calmness, silent prayer space, minarets calling hearts toward Allah, domes symbolizing unity, Islamic architectural beauty, Quran as guidance, open Quran with peaceful light, Quran resting with respect, tasbih as remembrance of Allah, prayer mat symbolizing humility, hands raised in sincere dua, moments of sujood, human reflection without identity, silhouette of a believer in prayer, back view of a servant turning to Allah, individual sitting alone in deep thought, tafakkur on creation, fajr atmosphere full of purity, night prayer filled with silence, Ramadan spirit, iftar time after patience, patience and sabr, gratitude and shukr, repentance and tawbah, mercy and forgiveness, remembrance of Akhirah, calm graveyard reminder, journey of life symbolized by empty road, desert symbolizing trials, abandoned places reminding worldly temporary nature, cycle of life and death, hope after hardship, light after darkness, greenery after rain, feeling of guidance, trust in Allah, complete reliance on Allah">All Spiritual & Reflective Themes</option>
+                            <option value="vast natural scenery, high mountains, flowing rivers, ocean waves">Nature & Divine Greatness</option>
+                            <option value="real mosque exterior in harmony with nature, mosque interior filled with calmness, minarets, domes, Islamic architectural beauty">Mosque & Architecture</option>
+                            <option value="silhouette of a believer in prayer, moments of sujood, hands raised in sincere dua, fajr atmosphere, night prayer">Worship & Prayer Moments</option>
+                            <option value="Quran as guidance, open Quran with peaceful light, tasbih as remembrance of Allah, prayer mat">Objects of Remembrance</option>
+                            <option value="desert symbolizing trials, abandoned places reminding worldly temporary nature, calm graveyard reminder, cycle of life and death, hope after hardship">Trials & Akhirah Reflection</option>
                         </select>
                     </div>
                     
-                    <!-- Number of Images Input -->
                     <div class="flex-1">
                         <label for="per_page" class="block text-sm font-medium text-gray-700 mb-1">Number of Images (Max 100)</label>
                         <input type="number" id="per_page" name="per_page" min="1" max="100" value="15" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
-                    Fetch & Start Slideshow
+                    New Request
                 </button>
             </form>
         </div>
-
-        <!-- Tab Content: History -->
-        <div id="tab-history" class="p-6 hidden">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Cached Searches</h3>
-            <ul id="history-list" class="space-y-2 max-h-64 overflow-y-auto">
-                <li class="text-gray-500 italic">No previous searches found.</li>
-            </ul>
-        </div>
     </div>
 
-    <!-- Status/Error Message Area -->
     <div id="status-message" class="mt-4 p-4 rounded-lg text-lg font-medium w-full max-w-4xl text-center">
-        <!-- Messages will be inserted here -->
-    </div>
-
-    <!-- Canvas Container (16:9 aspect ratio maintained by CSS) -->
-    <div id="canvas-container" class="mb-4">
-        <canvas id="photo-canvas">
-            Your browser does not support the HTML canvas tag.
-        </canvas>
-    </div>
-
-    <!-- Controls Container (Fullscreen, Record) -->
-    <div class="flex flex-col items-center w-full max-w-lg mb-8 space-y-4">
-        
-        <!-- Recording Duration Input (Time Picker) -->
-        <div class="w-full flex justify-center items-center space-x-4 bg-white p-3 rounded-lg shadow">
-            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
-                Record For:
-            </label>
-            <div class="flex items-center space-x-2">
-                <input type="number" id="record-duration-min" min="0" max="10" value="0" required 
-                       oninput="updateRecordDurationDisplay()"
-                       class="w-16 p-2 border border-gray-300 rounded-md text-center focus:ring-red-500 focus:border-red-500">
-                <span class="text-sm text-gray-700">min</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <input type="number" id="record-duration-sec" min="1" max="59" value="30" required 
-                       oninput="updateRecordDurationDisplay()"
-                       class="w-16 p-2 border border-gray-300 rounded-md text-center focus:ring-red-500 focus:border-red-500">
-                <span class="text-sm text-gray-700">sec</span>
-            </div>
         </div>
 
-        <div class="flex justify-center space-x-4">
-            <!-- Fullscreen Button -->
-            <button id="fullscreen-btn" onclick="toggleFullscreen()" class="p-3 bg-gray-500 text-white rounded-full shadow-lg hover:bg-gray-600 transition duration-200" title="Toggle Fullscreen">
-                <!-- SVG for Fullscreen Icon -->
-                <svg id="fullscreen-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m7-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m7 5v-4m0 0h-4m4 0l-5-5"></path>
-                </svg>
-            </button>
-
-            <!-- Record Button -->
-            <button id="record-btn" onclick="startRecording()" class="p-3 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition duration-200 flex items-center space-x-1" title="Start Recording">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
-                </svg>
-                <span id="record-text" class="font-semibold text-sm">Record (0m 30s)</span>
-            </button>
+    <div id="image-grid-container" class="w-full max-w-4xl mt-6 p-4 bg-white rounded-xl shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Fetched Images</h2>
+        <div id="image-grid">
+            <p class="text-gray-500 italic p-4 text-center">Enter your API key and click 'New Request' to fetch unique images.</p>
         </div>
     </div>
-    
-    <p class="mt-2 text-sm text-red-600 italic text-center max-w-xs">
-        (Note: Fullscreen and Recording features may be restricted by this editor environment.)
-    </p>
+
 
     <script>
         // --- Configuration Constants ---
         const API_KEY_STORAGE_KEY = "pexels_api_key";
+        const VIEWED_IDS_KEY_PREFIX = "pexels_viewed_ids_"; 
         const API_BASE_URL = "https://api.pexels.com/v1/search";
         const CACHE_KEY_PREFIX = "pexels_photo_cache_";
         const HISTORY_KEY = "pexels_slideshow_history";
         const CACHE_DURATION_MS = 3600000; // 1 hour
         
-        let PAN_DURATION_MS = 4000; // 4 seconds (User controlled)
-        const TRANSITION_DURATION_MS = 1000; // 1 second cross-fade
-
         // --- DOM Elements ---
         const form = document.getElementById('fetch-form');
         const apiKeyInput = document.getElementById('api-key-input'); 
         const categorySelect = document.getElementById('category');
         const perPageInput = document.getElementById('per_page');
-        const panDurationInput = document.getElementById('pan-duration');
-        const durationDisplay = document.getElementById('duration-display');
-        const canvasContainer = document.getElementById('canvas-container');
-        const canvas = document.getElementById('photo-canvas');
-        const ctx = canvas.getContext('2d');
         const statusMessage = document.getElementById('status-message');
-        const historyList = document.getElementById('history-list');
-        const recordBtn = document.getElementById('record-btn');
-        const recordText = document.getElementById('record-text');
-        const recordDurationMinInput = document.getElementById('record-duration-min');
-        const recordDurationSecInput = document.getElementById('record-duration-sec'); // New
+        const imageGrid = document.getElementById('image-grid');
 
-        // --- Slideshow/Animation State ---
-        let photoUrls = [];
-        let currentIndex = 0;
-        let slideshowInterval = null;
-        let animationFrameId = null;
-        let currentImage = null; 
-        let nextImage = null;    
-        let panStartTime = 0;
-        let activeTab = 'fetch';
-        let originalCanvasSize = { width: 0, height: 0 };
-
-        // --- Video Recording State ---
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        const VIDEO_RESOLUTION = { width: 1920, height: 1080 };
-        let recordingStartTime = null; // Used for canvas timestamp
-        
-        // --- Utility Functions ---
+        // --- State ---
+        // Get all possible values for randomization from the <select> options
+        const AVAILABLE_CATEGORIES = Array.from(categorySelect.options).map(option => option.value);
 
         /**
-         * Easing function for smoother pan (Cubic Ease In/Out)
-         * @param {number} t - time progress (0 to 1)
-         * @returns {number} Eased progress value (0 to 1)
+         * Selects a random category value from the AVAILABLE_CATEGORIES list and sets it as active.
          */
-        function easeInOutCubic(t) {
-            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        function randomizeCategory() {
+            const randomIndex = Math.floor(Math.random() * AVAILABLE_CATEGORIES.length);
+            categorySelect.value = AVAILABLE_CATEGORIES[randomIndex];
+        }
+
+
+        /**
+         * Loads and returns the set of photo IDs already viewed for a specific query.
+         */
+        function loadViewedIds(query) {
+            // Use the full query string as the unique key for viewed IDs
+            const key = VIEWED_IDS_KEY_PREFIX + query; 
+            try {
+                const stored = localStorage.getItem(key);
+                return stored ? new Set(JSON.parse(stored)) : new Set();
+            } catch (e) {
+                console.error("Error loading viewed IDs:", e);
+                return new Set();
+            }
         }
 
         /**
-         * Formats milliseconds into MM:SS format.
-         * @param {number} ms - time in milliseconds
-         * @returns {string} Formatted time string
+         * Saves a set of new photo IDs to the permanent viewed list for a specific query.
          */
-        function formatTime(ms) {
-            const totalSeconds = Math.floor(ms / 1000);
-            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-            const seconds = String(totalSeconds % 60).padStart(2, '0');
-            return `${minutes}:${seconds}`;
+        function saveViewedIds(query, newIds) {
+            const key = VIEWED_IDS_KEY_PREFIX + query;
+            try {
+                const existingIds = loadViewedIds(query);
+                for (const id of newIds) {
+                    existingIds.add(id);
+                }
+                localStorage.setItem(key, JSON.stringify(Array.from(existingIds)));
+            } catch (e) {
+                console.error("Error saving viewed IDs:", e);
+            }
         }
 
-        // --- API Key Management ---
+
+        /**
+         * Clears the current image grid and populates it with new images, including the download button.
+         * @param {Array<Object>} photos - Array of Pexels photo objects.
+         * @param {string} query - The search query/category.
+         */
+        function renderImageGrid(photos, query) {
+            imageGrid.innerHTML = '';
+            
+            if (photos.length === 0) {
+                imageGrid.innerHTML = `<p class="text-gray-500 italic p-4 text-center">No new unique images found for '${query}'. Try another theme.</p>`;
+                return;
+            }
+
+            const newIds = new Set();
+            photos.forEach((photo, index) => {
+                newIds.add(photo.id); 
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'grid-image-wrapper';
+
+                // Image element
+                const img = document.createElement('img');
+                // Use 'large2x' for efficient grid preview (1200px wide)
+                img.src = photo.src.original.replace('original', 'large2x'); 
+                img.alt = `${query} image ${index + 1}`;
+                img.className = 'grid-image';
+                img.loading = 'lazy'; 
+
+                // Download Button (Points to the original/highest resolution source)
+                const downloadLink = document.createElement('a');
+                // The 'original' size generally guarantees the highest quality, suitable for 1920x1080.
+                downloadLink.href = photo.src.original; 
+                downloadLink.download = `Pexels_Spiritual_Photo_${photo.id}.jpg`;
+                downloadLink.target = '_blank';
+                downloadLink.className = 'download-button';
+                downloadLink.textContent = 'Download (1920x1080+)';
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(downloadLink);
+                imageGrid.appendChild(wrapper);
+            });
+
+            // Persist the IDs of the newly displayed images
+            saveViewedIds(query, newIds);
+
+            displayStatus(`Successfully loaded ${photos.length} new unique images for theme.`, 'success');
+        }
+
+        // --- API Key Management (Unchanged) ---
         
         function getApiKey() {
             return apiKeyInput.value.trim();
@@ -291,9 +261,9 @@
                 const storedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
                 if (storedKey) {
                     apiKeyInput.value = storedKey;
-                    displayStatus("API Key loaded from local storage. Ready to fetch.", 'info');
+                    displayStatus("API Key loaded from local storage. Ready for a New Request.", 'info');
                 } else {
-                    displayStatus("Please enter your Pexels API Key above to start fetching images.", 'error');
+                    displayStatus("Please enter your Pexels API Key above to fetch images.", 'error');
                 }
             } catch (error) {
                 console.error("Failed to load API key from local storage:", error);
@@ -301,387 +271,7 @@
             }
         }
 
-        // --- Control Updates ---
-        
-        function updateDurationDisplay(value) {
-            PAN_DURATION_MS = parseInt(value, 10);
-            durationDisplay.textContent = (PAN_DURATION_MS / 1000).toFixed(1);
-            if (slideshowInterval) {
-                 startSlideshow(categorySelect.value);
-            }
-        }
-        
-        function updateRecordDurationDisplay() {
-            const minutes = parseInt(recordDurationMinInput.value) || 0;
-            const seconds = parseInt(recordDurationSecInput.value) || 0;
-            
-            // Ensure at least one second is set for recording
-            if (minutes === 0 && seconds === 0) {
-                 recordDurationSecInput.value = 1;
-                 updateRecordDurationDisplay();
-                 return;
-            }
-
-            const totalSeconds = (minutes * 60) + seconds;
-            
-            recordText.textContent = `Record (${minutes}m ${String(seconds).padStart(2, '0')}s)`;
-        }
-
-        // --- Fullscreen and Canvas Setup ---
-
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                canvasContainer.requestFullscreen().catch(err => {
-                    if (err.name === 'SecurityError' || (err.message && err.message.includes('permissions policy'))) {
-                        displayStatus("Fullscreen failed: The hosting environment blocks this feature. Try running the application in a separate browser tab.", 'error');
-                    } else {
-                        displayStatus(`Error attempting to enable full-screen mode: ${err.message}`, 'error');
-                    }
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        }
-        
-        function resizeCanvas() {
-            originalCanvasSize.width = canvasContainer.clientWidth;
-            originalCanvasSize.height = canvasContainer.clientHeight;
-            
-            // Apply responsive size unless recording
-            if (!mediaRecorder) {
-                canvas.width = originalCanvasSize.width;
-                canvas.height = originalCanvasSize.height;
-            }
-
-            if (currentImage) {
-                startImageAnimation(currentImage, photoUrls[currentIndex], nextImage); 
-            }
-        }
-
-        // --- Animation and Transition Logic ---
-
-        function calculatePanPoints(img) {
-            const panFactor = 1.15; // 15% zoom
-            const canvasWidth = canvas.width;
-            const canvasHeight = canvas.height;
-            const drawW = canvasWidth * panFactor;
-            const drawH = canvasHeight * panFactor;
-            
-            // Determine scale to fit source image onto the zoomed drawing size
-            const sourceScale = Math.min(img.width / drawW, img.height / drawH);
-            const sourceW = drawW * sourceScale;
-            const sourceH = drawH * sourceScale;
-            
-            const maxX = img.width - sourceW;
-            const maxY = img.height - sourceH;
-            
-            // Random start point
-            const startX = Math.random() * maxX;
-            const startY = Math.random() * maxY;
-            
-            // Random end point (ensuring it's distinct from start)
-            let endX = Math.random() * maxX;
-            let endY = Math.random() * maxY;
-
-            // Simple check to ensure motion is visible
-            if (Math.abs(startX - endX) < maxX * 0.1) endX = maxX - startX; 
-            if (Math.abs(startY - endY) < maxY * 0.1) endY = maxY - startY; 
-            
-            endX = Math.min(maxX, Math.max(0, endX));
-            endY = Math.min(maxY, Math.max(0, endY));
-
-            return { 
-                destX: 0, destY: 0, destW: canvasWidth, destH: canvasHeight,
-                sX: startX, sY: startY, sW: sourceW, sH: sourceH,
-                eX: endX, eY: endY, eW: sourceW, eH: sourceH
-            };
-        }
-
-        function startImageAnimation(img1, url1, img2, url2) {
-            stopAnimation();
-
-            img1.pan = calculatePanPoints(img1);
-            currentImage = img1;
-            
-            if (img2) {
-                img2.pan = calculatePanPoints(img2);
-                nextImage = img2;
-            } else {
-                nextImage = null;
-            }
-
-            panStartTime = 0; 
-            animationFrameId = requestAnimationFrame(animatePan);
-        }
-
-        function animatePan(timestamp) {
-            if (!currentImage) return;
-
-            if (!panStartTime) panStartTime = timestamp;
-            const elapsed = timestamp - panStartTime;
-            
-            // Total duration for the slideshow step
-            const totalDuration = PAN_DURATION_MS;
-
-            // Pan progress for the current image (0 to 1)
-            const panProgress = Math.min(elapsed / (totalDuration - TRANSITION_DURATION_MS), 1);
-            const easedPanProgress = easeInOutCubic(panProgress); // Apply smoothing
-
-            // Transition progress for the next image (0 to 1)
-            const transitionProgress = Math.min(Math.max(0, elapsed - (totalDuration - TRANSITION_DURATION_MS)) / TRANSITION_DURATION_MS, 1);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 1. Draw Previous/Current Image (Panning)
-            if (currentImage.pan) {
-                const { destX, destY, destW, destH, sX, sY, sW, sH, eX, eY } = currentImage.pan;
-                const currentSrcX = sX + (eX - sX) * easedPanProgress; 
-                const currentSrcY = sY + (eY - sY) * easedPanProgress; 
-                
-                // Fade out current image
-                ctx.globalAlpha = 1 - transitionProgress; 
-                ctx.drawImage(currentImage, currentSrcX, currentSrcY, sW, sH, destX, destY, destW, destH);
-                ctx.globalAlpha = 1; // Reset
-            }
-
-            // 2. Draw Next Image (Fading In and Panning)
-            if (nextImage && nextImage.pan) {
-                const { destX, destY, destW, destH, sX, sY, sW, sH, eX, eY } = nextImage.pan;
-                const currentSrcX = sX + (eX - sX) * easedPanProgress;
-                const currentSrcY = sY + (eY - sY) * easedPanProgress;
-
-                // Fade in next image
-                ctx.globalAlpha = transitionProgress;
-                ctx.drawImage(nextImage, currentSrcX, currentSrcY, sW, sH, destX, destY, destW, destH);
-                ctx.globalAlpha = 1; // Reset
-            }
-            
-            // 3. Draw Recording Timestamp (Only when recording)
-            if (mediaRecorder && mediaRecorder.state === 'recording' && recordingStartTime) {
-                const elapsedRecordingTime = timestamp - recordingStartTime;
-                const timeText = formatTime(elapsedRecordingTime);
-
-                ctx.globalAlpha = 1;
-                // Use a large font size for HD resolution (1920x1080)
-                ctx.font = 'bold 72px Inter, sans-serif'; 
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // Semi-transparent white
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)'; // Subtle black stroke for visibility
-                ctx.lineWidth = 6;
-                ctx.textAlign = 'right';
-                
-                const padding = 50;
-                const textX = canvas.width - padding;
-                const textY = canvas.height - padding;
-                
-                ctx.strokeText(timeText, textX, textY);
-                ctx.fillText(timeText, textX, textY);
-            }
-
-            if (elapsed < totalDuration) {
-                animationFrameId = requestAnimationFrame(animatePan);
-            } else {
-                currentImage = nextImage;
-                nextImage = null;
-                panStartTime = 0; 
-            }
-        }
-
-        function loadImage(url, callback) {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous'; 
-            img.onload = () => { callback(img); };
-            img.onerror = () => {
-                console.error(`Failed to load image: ${url}`);
-                callback(null);
-            };
-            img.src = url;
-        }
-        
-        function loadNextImage() {
-            if (photoUrls.length === 0) return;
-
-            const nextIndex = (currentIndex + 1) % photoUrls.length;
-            const currentUrl = photoUrls[currentIndex];
-            const nextUrl = photoUrls[nextIndex];
-
-            // 1. Load current image
-            loadImage(currentUrl, (img1) => {
-                if (!img1) {
-                    displayStatus("Failed to load an image. Skipping.", 'error');
-                    currentIndex = nextIndex;
-                    return;
-                }
-
-                // 2. Load next image
-                loadImage(nextUrl, (img2) => {
-                    startImageAnimation(img1, currentUrl, img2, nextUrl);
-                    currentIndex = nextIndex;
-                });
-            });
-        }
-
-        function stopAnimation() {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-            panStartTime = 0;
-        }
-
-        function stopSlideshow() {
-             if (slideshowInterval) {
-                clearInterval(slideshowInterval);
-                slideshowInterval = null;
-            }
-            stopAnimation();
-        }
-
-        function startSlideshow(category) {
-            stopSlideshow();
-
-            if (photoUrls.length === 0) {
-                displayStatus(`No images found for category: ${category}. Check your API Key.`, 'error');
-                return;
-            }
-            
-            currentIndex = photoUrls.length - 1; 
-            loadNextImage();
-
-            slideshowInterval = setInterval(() => {
-                loadNextImage();
-            }, PAN_DURATION_MS); 
-            
-            displayStatus(`Slideshow started with ${photoUrls.length} images for category: ${category} (${(PAN_DURATION_MS / 1000).toFixed(1)}s Pan/Transition)`, 'success');
-        }
-
-        // --- Video Recording Logic ---
-
-        function startRecording() {
-            if (mediaRecorder) {
-                displayStatus("Recording already in progress. Click Stop Recording.", 'info');
-                return;
-            }
-            
-            if (photoUrls.length === 0) {
-                 displayStatus("Please fetch images and start the slideshow before recording.", 'error');
-                 return;
-            }
-
-            const minutes = parseInt(recordDurationMinInput.value) || 0;
-            const seconds = parseInt(recordDurationSecInput.value) || 0;
-            const recordDurationMS = (minutes * 60 * 1000) + (seconds * 1000);
-            
-            if (recordDurationMS <= 0 || recordDurationMS > 600000) { // Max 10 minutes
-                displayStatus("Please set a valid recording duration between 1 second and 10 minutes.", 'error');
-                return;
-            }
-
-            // 1. Set canvas to target resolution (1920x1080) for high quality video output
-            canvas.width = VIDEO_RESOLUTION.width;
-            canvas.height = VIDEO_RESOLUTION.height;
-            resizeCanvas(); 
-
-            // 2. Setup MediaRecorder
-            const stream = canvas.captureStream(30); // 30 FPS
-            
-            recordedChunks = [];
-            
-            const options = { mimeType: 'video/webm; codecs=vp8' };
-
-            try {
-                mediaRecorder = new MediaRecorder(stream, options);
-            } catch (e) {
-                displayStatus(`Recording failed: MediaRecorder setup error: ${e.message}`, 'error');
-                canvas.width = originalCanvasSize.width; 
-                canvas.height = originalCanvasSize.height;
-                resizeCanvas();
-                return;
-            }
-
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
-
-            mediaRecorder.onstop = downloadVideo;
-
-            mediaRecorder.start();
-            recordingStartTime = Date.now(); // Start timestamp tracking
-
-            // Update UI for recording state
-            recordBtn.onclick = stopRecording;
-            recordBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-            recordBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
-            recordText.textContent = 'STOP RECORDING';
-
-            displayStatus(`Recording started at 1920x1080 for ${minutes}m ${seconds}s...`, 'info');
-            
-            // Automatically stop after user-defined duration
-            setTimeout(() => {
-                if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    stopRecording();
-                }
-            }, recordDurationMS);
-        }
-
-        function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                recordingStartTime = null;
-                
-                // Restore UI for non-recording state
-                recordBtn.onclick = startRecording;
-                recordBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
-                recordBtn.classList.add('bg-red-600', 'hover:bg-red-700');
-                updateRecordDurationDisplay(); 
-
-                // Restore canvas resolution to responsive size
-                canvas.width = originalCanvasSize.width;
-                canvas.height = originalCanvasSize.height;
-                resizeCanvas();
-            }
-        }
-
-        function downloadVideo() {
-            if (recordedChunks.length === 0) {
-                displayStatus("Recording finished, but no data was captured. Ensure the slideshow was running during recording.", 'error');
-                mediaRecorder = null;
-                return;
-            }
-            
-            const blob = new Blob(recordedChunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `slideshow_${new Date().toISOString()}.webm`;
-            
-            document.body.appendChild(a);
-            a.click();
-            
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-
-            displayStatus(`HD Video downloaded! Resolution: 1920x1080. Check your downloads folder.`, 'success');
-            mediaRecorder = null;
-        }
-
-        // --- History and Fetch Logic ---
-
-        function switchTab(tabId) {
-            document.getElementById('tab-fetch').classList.add('hidden');
-            document.getElementById('tab-history').classList.add('hidden');
-            document.getElementById('tab-fetch-btn').classList.remove('active');
-            document.getElementById('tab-history-btn').classList.remove('active');
-
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabId}-btn`).classList.add('active');
-            activeTab = tabId;
-
-            if (tabId === 'history') { loadHistory(); }
-        }
+        // --- Status Display (Simplified) ---
 
         function displayStatus(message, type = 'loading') {
             statusMessage.textContent = message;
@@ -698,170 +288,79 @@
             }
         }
         
-        function saveToHistory(query, perPage) { 
-            try {
-                const existingHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-                const timestamp = Date.now();
-                const cacheId = query + '_' + perPage;
-
-                let updated = false;
-                for (let i = 0; i < existingHistory.length; i++) {
-                    if (existingHistory[i].cacheId === cacheId) {
-                        existingHistory[i].timestamp = timestamp;
-                        existingHistory[i].label = `${query.charAt(0).toUpperCase() + query.slice(1)} (${perPage} photos) - ${new Date(timestamp).toLocaleTimeString()}`;
-                        const item = existingHistory.splice(i, 1)[0];
-                        existingHistory.unshift(item);
-                        updated = true;
-                        break;
-                    }
-                }
-
-                if (!updated) {
-                    const newEntry = {
-                        timestamp: timestamp,
-                        cacheId: cacheId,
-                        query: query,
-                        perPage: perPage,
-                        label: `${query.charAt(0).toUpperCase() + query.slice(1)} (${perPage} photos) - ${new Date(timestamp).toLocaleTimeString()}`,
-                    };
-                    existingHistory.unshift(newEntry);
-                }
-
-                localStorage.setItem(HISTORY_KEY, JSON.stringify(existingHistory.slice(0, 20)));
-
-            } catch (error) {
-                console.error("Failed to save history:", error);
-            }
-        }
-        
-        function loadHistory() {
-            historyList.innerHTML = '';
-            try {
-                const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-
-                if (history.length === 0) {
-                    historyList.innerHTML = '<li class="text-gray-500 italic p-2">No previous searches found.</li>';
-                    return;
-                }
-
-                history.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'history-item p-3 border-b border-gray-100 last:border-b-0 flex justify-between items-center';
-                    li.innerHTML = `
-                        <span class="text-gray-800">${item.label}</span>
-                        <span class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleDateString()}</span>
-                    `;
-                    li.onclick = () => loadFromHistory(item);
-                    historyList.appendChild(li);
-                });
-
-            } catch (error) {
-                console.error("Failed to load history:", error);
-                historyList.innerHTML = '<li class="text-red-500 p-2">Error loading history data.</li>';
-            }
-        }
-        
-        function loadFromHistory(historyItem) {
-            const currentCacheKey = CACHE_KEY_PREFIX + historyItem.cacheId;
-            const cachedData = localStorage.getItem(currentCacheKey);
-            const now = Date.now();
-
-            if (!cachedData) {
-                displayStatus(`Error: No image cache found for '${historyItem.query}'. Please re-fetch.`, 'error');
-                return;
-            }
-
-            try {
-                const cache = JSON.parse(cachedData);
-                if (now - cache.timestamp < CACHE_DURATION_MS) {
-                    displayStatus(`Loading slideshow from cache: ${historyItem.label}.`, 'success');
-                    // CRITICAL FIX: Ensure we map to the highest quality image: .original
-                    photoUrls = cache.photos.map(p => p.src.original); 
-                    startSlideshow(historyItem.query);
-                    switchTab('fetch');
-                } else {
-                    displayStatus(`Cache for '${historyItem.query}' has expired. Please re-fetch from the 'Fetch New Data' tab.`, 'info');
-                    localStorage.removeItem(currentCacheKey);
-                }
-            } catch (e) {
-                console.error("Error processing history cache:", e);
-                displayStatus("Error reading cached images. Please try fetching new data.", 'error');
-            }
-        }
-        
-        async function fetchPexelsImage(query, perPage, checkOnly = false) {
+        /**
+         * Core fetching logic with built-in loop to find unique images.
+         */
+        async function fetchPexelsImage(query, perPage) {
             const apiKey = getApiKey();
-            const currentCacheKey = CACHE_KEY_PREFIX + query + '_' + perPage;
-            const PEXELS_SEARCH_URL = `${API_BASE_URL}?query=${encodeURIComponent(query)}&per_page=${perPage}&orientation=landscape`;
             
             if (!apiKey) {
                 displayStatus("CRITICAL: Please enter your Pexels API Key above to fetch images.", 'error');
-                stopSlideshow();
                 return;
             }
 
-            displayStatus(`Checking cache for '${query}' (${perPage} images)...`);
+            let uniquePhotos = [];
+            const viewedIds = loadViewedIds(query);
+            let page = 1;
+            const MAX_PAGES = 10; 
+            const FETCH_BATCH_SIZE = 80; // Fetch max possible to increase chance of finding unique photos
+
+            displayStatus(`Searching for ${perPage} new unique images for the selected theme (Page ${page})...`);
             
-            const cachedData = localStorage.getItem(currentCacheKey);
-            const now = Date.now();
-
-            if (cachedData) {
-                try {
-                    const cache = JSON.parse(cachedData);
-                    if (now - cache.timestamp < CACHE_DURATION_MS) {
-                        displayStatus(`Serving data from local cache for '${query}'.`, 'success');
-                        // CRITICAL FIX: Ensure we map to the highest quality image: .original
-                        photoUrls = cache.photos.map(p => p.src.original); 
-                        startSlideshow(query);
-                        saveToHistory(query, perPage); 
-                        return;
-                    } else {
-                        displayStatus(`Local cache for '${query}' expired. Ready to fetch new data.`);
-                        localStorage.removeItem(currentCacheKey);
-                    }
-                } catch (e) {
-                    console.error("Error parsing cached data:", e);
-                    localStorage.removeItem(currentCacheKey);
-                }
-            }
-            
-            if (checkOnly) {
-                displayStatus("No valid cache found. Ready for a new search.", 'info');
-                return;
-            }
-
-            displayStatus(`Fetching ${perPage} '${query}' images from Pexels API...`);
-            try {
-                const response = await fetch(PEXELS_SEARCH_URL, {
-                    method: 'GET',
-                    headers: { 'Authorization': apiKey, 'Content-Type': 'application/json' }
-                });
-
-                if (!response.ok) {
-                    if (response.status === 403 || response.status === 401) {
-                         throw new Error(`Authentication Error (Status ${response.status}). Please ensure the API Key is correct.`);
-                    }
-                    throw new Error(`Failed to fetch data: HTTP status ${response.status} (${response.statusText})`);
-                }
-
-                const data = await response.json();
+            while (uniquePhotos.length < perPage && page <= MAX_PAGES) {
+                // To maximize diversity given the long query string, we set orientation=landscape.
+                const PEXELS_SEARCH_URL = `${API_BASE_URL}?query=${encodeURIComponent(query)}&per_page=${FETCH_BATCH_SIZE}&orientation=landscape&page=${page}`;
                 
-                if (data.photos && data.photos.length > 0) {
-                    const cachePayload = { timestamp: Date.now(), photos: data.photos };
-                    localStorage.setItem(currentCacheKey, JSON.stringify(cachePayload));
-                    
-                    // CRITICAL FIX: Use the highest quality image source
-                    photoUrls = data.photos.map(p => p.src.original); 
-                    saveToHistory(query, perPage); 
-                    startSlideshow(query);
-                } else {
-                     throw new Error("API call was successful but returned no photos for this search query.");
-                }
+                try {
+                    const response = await fetch(PEXELS_SEARCH_URL, {
+                        method: 'GET',
+                        headers: { 'Authorization': apiKey, 'Content-Type': 'application/json' }
+                    });
 
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                displayStatus(`Error: ${error.message}`, 'error');
-                stopSlideshow();
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch data: HTTP status ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (!data.photos || data.photos.length === 0) {
+                        displayStatus(`Search finished. Found ${uniquePhotos.length} unique images. No more photos available for this theme.`, 'info');
+                        break;
+                    }
+
+                    const newlyFetchedPhotos = data.photos;
+                    
+                    // Filter out already viewed photos and duplicates
+                    const newUniqueBatch = newlyFetchedPhotos.filter(photo => {
+                        return !viewedIds.has(photo.id) && !uniquePhotos.some(p => p.id === photo.id);
+                    });
+
+                    // Add new unique photos to the result array, capping at the requested amount
+                    uniquePhotos.push(...newUniqueBatch.slice(0, perPage - uniquePhotos.length));
+                    
+                    if (data.next_page) {
+                        page++;
+                        if (uniquePhotos.length < perPage) {
+                            displayStatus(`Searching for ${perPage - uniquePhotos.length} more unique images for theme (Page ${page})...`);
+                        }
+                    } else {
+                        break; 
+                    }
+
+                } catch (error) {
+                    console.error("Fetch Error:", error);
+                    displayStatus(`Error fetching images: ${error.message}`, 'error');
+                    renderImageGrid([], query);
+                    return;
+                }
+            } 
+
+            if (uniquePhotos.length > 0) {
+                // Skip history/cache logic for simplicity but maintain viewed IDs
+                renderImageGrid(uniquePhotos, query);
+            } else {
+                 displayStatus(`Found 0 new unique images for the selected theme. All photos for this term might have been viewed.`, 'info');
+                 renderImageGrid([], query); 
             }
         }
 
@@ -869,39 +368,24 @@
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             
-            const query = categorySelect.value;
+            // Randomize category FIRST
+            randomizeCategory();
+
+            // Get query after randomization
+            const query = categorySelect.value; 
             const perPage = Math.min(100, Math.max(1, parseInt(perPageInput.value) || 15)); 
             perPageInput.value = perPage;
 
-            fetchPexelsImage(query, perPage, false);
+            // Fetch new unique images
+            fetchPexelsImage(query, perPage); 
         });
-
-        // Listen for browser fullscreen changes to ensure canvas size is updated correctly
-        document.addEventListener('fullscreenchange', resizeCanvas); 
-        document.addEventListener('webkitfullscreenchange', resizeCanvas);
-        document.addEventListener('mozfullscreenchange', resizeCanvas);
-        document.addEventListener('MSFullscreenChange', resizeCanvas);
-        window.addEventListener('resize', resizeCanvas);
 
         window.onload = () => {
             loadApiKey();
-
-            // Set initial control state
-            updateDurationDisplay(panDurationInput.value); 
-            updateRecordDurationDisplay(); 
-
-            // Initial canvas setup
-            resizeCanvas(); 
             
-            // Set initial tab state
-            switchTab('fetch');
-
-            // Automatically attempt to load cache for the default values (Nature, 15) on startup
-            const defaultCategory = categorySelect.value;
-            const defaultPerPage = parseInt(perPageInput.value);
-            
-            if (getApiKey()) {
-                fetchPexelsImage(defaultCategory, defaultPerPage, true);
+            // Initial check to ensure a category is selected and provide instructions
+            if (categorySelect.value) {
+                displayStatus("Ready to search. Click 'New Request' to fetch unique images.", 'info');
             }
         };
     </script>
